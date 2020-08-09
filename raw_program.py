@@ -1,27 +1,24 @@
-from pylab import *
+import numpy as np
+import numpy.random as rand
+import matplotlib.pyplot as plt
+#from pylab import *
 
 N=50 # number of cities
-iter=3 # // of iterations
-city=zeros((2,N))
-lista=list(range(N))
-#lista=list(lista)
+iter=3 # // of iterations ------>iterations
 T_min = 0.1
 T=5.
-Tem=[]
 alpha=0.8
-accelist=[]
 nstep=500 #number of moves 
+city=np.zeros((2,N))
+lista=list(range(N))
+#lista=list(lista)
+Tem=[]
+accelist=[]
 for i in range(N):
     for j in (0,1):
-        city[j][i]=rand() #cities coordinates 
+        city[j][i]=rand.rand() #cities coordinates 
   
-      
-iniziale=lung()
-print('Distanza iniziale:',iniziale)
-corrente=[iniziale]
-plpath()
-pat=[0] #andranno appese tute le lunghezze per ogni iterazione, non mi pare l abbia utilizzato
-
+    
 def lung():
     global N,city,lista
     leng=0.
@@ -31,32 +28,32 @@ def lung():
             iloc1=int(lista[i])
             iloc2=int(lista[i-1])
             dum+=(city[icoo][iloc1]-city[icoo][iloc2])**2
-        leng+=sqrt(dum)
+        leng+=np.sqrt(dum)
     return leng
 
 def plpath():
     global city,N,lista
-    dump=zeros((2,N+1))
+    dump=np.zeros((2,N+1))
     for k in range(N):
         for i in (0,1):
             dump[i][k]=city[i][lista[k]]
     dump[0][N]=city[0][lista[0]]
     dump[1][N]=city[1][lista[0]]
-    figure(1)
-    title("Percorso tra le citta'")
-    plot (dump[0],dump[1],'o-')
-    grid()
-    show()
+    plt.figure(1)
+    plt.title("Percorso tra le citta'")
+    plt.plot (dump[0],dump[1],'o-')
+    plt.grid()
+    plt.show()
     
 def confronto():
     global accelist, Tem
-    title("Mosse accettate per numero di passi in funzione della temperatura")
-    xlabel("Temperatura(unita' arbitrarie)")
-    ylabel("Mosse accettate (%)")    
-    plot(Tem,accelist)
-    legend()
-    grid()
-    show()
+    plt.title("Mosse accettate per numero di passi in funzione della temperatura")
+    plt.xlabel("Temperatura(unita' arbitrarie)")
+    plt.ylabel("Mosse accettate (%)")    
+    plt.plot(Tem,accelist)
+    plt.legend()
+    plt.grid()
+    plt.show()
 
 #--------------------------------------------------------------------------|
     
@@ -109,14 +106,14 @@ def anneal_BRev_distance():
     accelist=[]
     nstep=500 #number of moves 
     while T > T_min:
-        seed(); acce=0; ii=0
+        rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
-            x=int(N*rand())
-            y=int(N*rand())
+            x=int(N*rand.rand())
+            y=int(N*rand.rand())
             breverse(x,y)
             new=lung() 
-            if exp(-(new-old)/T) >= 1:
+            if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
                 new=lung()
@@ -138,14 +135,14 @@ def anneal_BRev_Metropolis():
     Tem=[]
     nstep=500
     while T > T_min:
-        seed(); acce=0; ii=0
+        rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
-            x=int(N*rand())
-            y=int(N*rand())
+            x=int(N*rand.rand())
+            y=int(N*rand.rand())
             breverse(x,y)
             new=lung()
-            if exp(-(new-old)/T) > rand():
+            if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
                 new=lung()
@@ -168,13 +165,13 @@ def anneal_swap_Metropolis():
     accelist=[]
     nstep=500
     while T > T_min:
-        seed(); acce=0; ii=0
+        rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
-            ir=int(N*rand())
+            ir=int(N*rand.rand())
             swap(ir,ir+1)
             new=lung()
-            if exp(-(new-old)/T) > rand():
+            if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
             else:
@@ -195,13 +192,13 @@ def anneal_swap_distance():
     accelist=[]
     nstep=500
     while T > T_min:
-        seed(); acce=0; ii=0
+        rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
-            ir=int(N*rand())
+            ir=int(N*rand.rand())
             swap(ir,ir+1)
             new=lung()
-            if exp(-(new-old)/T) >= 1:
+            if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
             else:
@@ -220,19 +217,19 @@ def anneal_PG_Metropolis():
     accelist=[]
     nstep=500
     while T > T_min:
-        seed(); acce=0; ii=0
+        rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
 #si crea una lista d'appoggio nella quale salvare la lista originaria            
             save=[]
             for m in range(N):
                 save.append(lista[m])
-            x=int(N*rand())
-            y=int(N*rand())
-            z=int(N*rand())
+            x=int(N*rand.rand())
+            y=int(N*rand.rand())
+            z=int(N*rand.rand())
             prunegraft(x,y,z) #si applica il metodo
             new=lung()
-            if exp(-(new-old)/T) > rand():
+            if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
                 new=lung()
@@ -254,19 +251,19 @@ def anneal_PG_distance():
     T_min = 0.1#0.00001
     nstep=500
     while T > T_min:
-        seed(); acce=0; ii=0
+        rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
             save=[]
             for m in range(N):
                 save.append(lista[m])
-            x=int(N*rand())
-            y=int(N*rand())
-            z=int(N*rand())
+            x=int(N*rand.rand())
+            y=int(N*rand.rand())
+            z=int(N*rand.rand())
             prunegraft(x,y,z)
             new=lung()
             
-            if exp(-(new-old)/T) >= 1:
+            if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
                 new=lung()
@@ -287,6 +284,12 @@ OPTIONS (RAW)
 Moves: swap, block reverse, prune and graft
 Criteria: Metropolis, distance
 '''
+iniziale=lung()
+print('Distanza iniziale:',iniziale)
+corrente=[iniziale]
+plpath()
+pat=[0] #andranno appese tute le lunghezze per ogni iterazione, non mi pare l abbia utilizzato
+
 for ii in range(iter):
     
     anneal_BRev_distance()
@@ -302,13 +305,13 @@ for ii in range(iter):
     print('Distanza corrente:',corrente[ii+1],', Iter:',ii+1)
     plpath()
 if iter>1:
-    figure(2)
-    title("Distanza corrente in funzione del numero di iterazioni")
-    xlabel("Iter")
-    ylabel("Distanza corrente (unita' arbitrarie)")
-    plot(corrente,label="Distanza")
-    legend()
-    grid()
+    plt.figure(2)
+    plt.title("Distanza corrente in funzione del numero di iterazioni")
+    plt.xlabel("Iter")
+    plt.ylabel("Distanza corrente (unita' arbitrarie)")
+    plt.plot(corrente,label="Distanza")
+    plt.legend()
+    plt.grid()
 print('Distanza finale:',corrente[-1])
-show()
+plt.show()
 print("Diminuzione percentuale della distanza", (min(corrente)/max(corrente))*100., "%")
