@@ -7,7 +7,7 @@ Created on Sun Aug  9 09:53:20 2020
 import numpy as np
 import numpy.random as rand
 import matplotlib.pyplot as plt
-#import configparser
+import configparser
 #import sys
 #from sys import argv
 import functions
@@ -39,9 +39,9 @@ OPTIONS (RAW)
 Moves: swap, block reverse, prune and graft
 Criteria: Metropolis, distance
 '''
-iniziale=functions.lenght(N)
-print('Distanza iniziale:',iniziale)
-corrente=[iniziale]
+start=functions.lenght(N)
+print('Initial distance:',start)
+distances=[start]
 functions.plpath(N)
 
 for ii in range(iter):
@@ -55,17 +55,18 @@ for ii in range(iter):
     
     if ii==0:
         functions.confronto()
-    corrente.append(functions.lenght(N))
-    print('Distanza corrente:',corrente[ii+1],', Iter:',ii+1)
+    distances.append(functions.lenght(N))
+    print('Current distance:',distances[ii+1],', Iter:',ii+1)
     functions.plpath(N)
 if iter>1:
     plt.figure(2)
-    plt.title("Distanza corrente in funzione del numero di iterazioni")
+    plt.title("Current distance vs. # of iterations")
     plt.xlabel("Iter")
-    plt.ylabel("Distanza corrente (unita' arbitrarie)")
-    plt.plot(corrente,label="Distanza")
+    plt.ylabel("Current distance (arb. units)")
+    plt.plot(distances)
     plt.legend()
     plt.grid()
-print('Distanza finale:',corrente[-1])
+print('Final distance:',distances[-1])
 plt.show()
-print("Diminuzione percentuale della distanza", (min(corrente)/max(corrente))*100., "%")
+print("Percentage decrease of the distance", (max(distances)-min(distances))/max(distances)*100., "%")
+#print("Percentage decrease of the distance", (min(distances)/max(distances))*100., "%")

@@ -11,7 +11,6 @@ import configparser
 
 config = configparser.ConfigParser()
 config.read('input.txt')
-#config.read(sys.argv[1])
 
 N = int( config.get('parameters', 'N') )
 '''
@@ -52,16 +51,16 @@ def plpath(N):
     dump[0][N]=city[0][citynum[0]]
     dump[1][N]=city[1][citynum[0]]
     plt.figure(1)
-    plt.title("Percorso tra le citta'")
+    plt.title("Followed path")
     plt.plot (dump[0],dump[1],'o-')
     plt.grid()
     plt.show()
     
 def confronto():
     global accelist, Tem
-    plt.title("Mosse accettate per numero di passi in funzione della temperatura")
-    plt.xlabel("Temperatura(unita' arbitrarie)")
-    plt.ylabel("Mosse accettate (%)")    
+    plt.title("Moves acceptance rate vs. temperature")
+    plt.xlabel("Temperature (arb. units)")
+    plt.ylabel("Moves acceptance rate (%)")    
     plt.plot(Tem,accelist)
     plt.legend()
     plt.grid()
