@@ -7,54 +7,57 @@ Created on Sun Aug  9 09:53:20 2020
 import numpy as np
 import numpy.random as rand
 import matplotlib.pyplot as plt
-import configparser
-import sys
-from sys import argv
+#import configparser
+#import sys
+#from sys import argv
 import functions
 
 
 config = configparser.ConfigParser()
-config.read(sys.argv[1])
+config.read('input.txt')
+#config.read(sys.argv[1])
 
-N = config.get('parameters', 'N')
-iterations = config.get('parameters', 'iterations')
-T_min = config.get('parameters', 'T_min')
-T = config.get('parameters', 'T')
+N = int( config.get('parameters', 'N') )
+iterations = int( config.get('parameters', 'iterations') )
+nstep = int( config.get('parameters', 'nstep') )
+T_min = float( config.get('parameters', 'T_min') )
+T = float( config.get('parameters', 'T') )
+alpha = float( config.get('parameters', 'alpha') )
 
+'''
 city = np.zeros((2,N))
-lista = list(range(N))
-#lista=list(lista)
+citynum = list(range(N))
 Tem = []
 accelist = []
 for i in range(N):
     for j in (0,1):
         city[j][i] = rand.rand() #cities coordinates 
+'''
 
 '''
 OPTIONS (RAW)
 Moves: swap, block reverse, prune and graft
 Criteria: Metropolis, distance
 '''
-iniziale=functions.lung()
+iniziale=functions.lenght(N)
 print('Distanza iniziale:',iniziale)
 corrente=[iniziale]
-functions.plpath()
-pat=[0] #andranno appese tute le lunghezze per ogni iterazione, non mi pare l abbia utilizzato
+functions.plpath(N)
 
 for ii in range(iter):
     
-    functions.anneal_BRev_distance()
-    #functions.anneal_BRev_Metropolis()
+    functions.anneal_BRev_distance(N, alpha, T)
+    #functions.anneal_BRev_Metropolis(N, alpha, T)
     #functions.anneal_swap_Metropolis()
-    #functions.anneal_swap_distance()
-    #functions.anneal_PG_Metropolis()
-    #functions.anneal_PG_distance()
+    #functions.anneal_swap_distance(N, alpha, T)
+    #functions.anneal_PG_Metropolis(N, alpha, T)
+    #functions.anneal_PG_distance(N, alpha, T)
     
     if ii==0:
         functions.confronto()
-    corrente.append(functions.lung())
+    corrente.append(functions.lenght(N))
     print('Distanza corrente:',corrente[ii+1],', Iter:',ii+1)
-    functions.plpath()
+    functions.plpath(N)
 if iter>1:
     plt.figure(2)
     plt.title("Distanza corrente in funzione del numero di iterazioni")
