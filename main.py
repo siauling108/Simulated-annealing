@@ -39,29 +39,29 @@ OPTIONS (RAW)
 Moves: swap, block reverse, prune and graft
 Criteria: Metropolis, distance
 '''
-start=functions.lenght(N)
+city = functions.travel(N)
+start=functions.lenght(N, city)
 print('Initial distance:',start)
 distances=[start]
-functions.plpath(N)
+functions.plpath(N, city)
 
-for ii in range(iter):
-    
-    functions.anneal_BRev_distance(N, alpha, T)
-    #functions.anneal_BRev_Metropolis(N, alpha, T)
-    #functions.anneal_swap_Metropolis()
-    #functions.anneal_swap_distance(N, alpha, T)
-    #functions.anneal_PG_Metropolis(N, alpha, T)
-    #functions.anneal_PG_distance(N, alpha, T)
+for ii in range(iterations):
+    functions.anneal_BRev_distance(N, alpha, T, city)
+    #functions.anneal_BRev_Metropolis(N, alpha, T, city)
+    #functions.anneal_swap_Metropolis(N, alpha, T, city) #comp. demanding
+    #functions.anneal_swap_distance(N, alpha, T, city)
+    #functions.anneal_PG_Metropolis(N, alpha, T, city)
+    #functions.anneal_PG_distance(N, alpha, T, city)
     
     if ii==0:
         functions.confronto()
-    distances.append(functions.lenght(N))
-    print('Current distance:',distances[ii+1],', Iter:',ii+1)
-    functions.plpath(N)
-if iter>1:
+    distances.append(functions.lenght(N, city))
+    print('Current distance:',distances[ii+1],', Iteration:',ii+1)
+    functions.plpath(N, city)
+if iterations>1:
     plt.figure(2)
     plt.title("Current distance vs. # of iterations")
-    plt.xlabel("Iter")
+    plt.xlabel("Iteration")
     plt.ylabel("Current distance (arb. units)")
     plt.plot(distances)
     plt.legend()

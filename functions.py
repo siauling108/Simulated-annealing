@@ -21,17 +21,19 @@ T = float( config.get('parameters', 'T') )
 alpha = float( config.get('parameters', 'alpha') )
 '''
 
-city = np.zeros((2,N))
 citynum = list(range(N))
 Tem = []
 accelist = []
-for i in range(N):
-    for j in (0,1):
-        city[j][i] = rand.rand() #cities coordinates 
 
+def travel(N):
+    city = np.zeros((2,N))
+    for i in range(N):
+        for j in (0,1):
+            city[j][i] = rand.rand() #cities coordinates 
+    return city
 
-def lenght(N):
-    global city,citynum
+def lenght(N, city):
+    global citynum
     leng=0.
     for i in range(N):
         dum=0.;
@@ -42,8 +44,8 @@ def lenght(N):
         leng+=np.sqrt(dum)
     return leng
 
-def plpath(N):
-    global city,citynum
+def plpath(N, city):
+    global citynum
     dump=np.zeros((2,N+1))
     for k in range(N):
         for i in (0,1):
@@ -75,8 +77,8 @@ def breverse(x,y):
     dummy=citynum[i:j+1]
     citynum[i:j+1]=dummy[::-1] # ::-1 reverses the order of the list
 
-def swap(i,j,N):
-    global city, citynum
+def swap(i,j,N, city):
+    global citynum
     i=i%N; j=j%N
     salva=citynum[i]
     citynum[i]=citynum[j]
@@ -109,10 +111,11 @@ def prunegraft(x,y,z):
         
 #--------------------------------------------------------------------------|
         
-def anneal_BRev_distance(N, alpha, T):
-    global city, citynum, Tem, accelist
-    old=lenght(N)
-    T_min = 0.1
+def anneal_BRev_distance(N, alpha, T, city):
+    global citynum
+    global Tem, accelist
+    old=lenght(N, city)
+    T_min = 0.1 #put them as an arg. later
     Tem=[]
     accelist=[]
     nstep=500 #number of moves 
@@ -123,11 +126,11 @@ def anneal_BRev_distance(N, alpha, T):
             x=int(N*rand.rand())
             y=int(N*rand.rand())
             breverse(x,y)
-            new=lenght(N) 
+            new=lenght(N, city) 
             if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
-                new=lenght(N)
+                new=lenght(N, city)
             else:
                 breverse(y,x) #inverto nuovemente,
 #         print "T",T
@@ -137,9 +140,9 @@ def anneal_BRev_distance(N, alpha, T):
         if acce==0: break
         T = T*alpha
         
-def anneal_BRev_Metropolis(N, alpha, T):
-    global city, citynum, accelist, Tem
-    old=lenght(N)
+def anneal_BRev_Metropolis(N, alpha, T, city):
+    global citynum, accelist, Tem
+    old=lenght(N, city)
     T_min = 0.1
     accelist=[]
     Tem=[]
@@ -151,11 +154,11 @@ def anneal_BRev_Metropolis(N, alpha, T):
             x=int(N*rand.rand())
             y=int(N*rand.rand())
             breverse(x,y)
-            new=lenght(N)
+            new=lenght(N, city)
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
-                new=lenght(N)
+                new=lenght(N,city)
             else:
                 breverse(y,x)
 #         print "T",T
@@ -166,9 +169,9 @@ def anneal_BRev_Metropolis(N, alpha, T):
         T = T*alpha   
 
         
-def anneal_swap_Metropolis():
-    global city, citynum, Tem, accelist
-    old=lenght(N)
+def anneal_swap_Metropolis(N, T, alpha, city):
+    global citynum, Tem, accelist
+    old=lenght(N, city)
     T_min = 0.1
     Tem=[]
     accelist=[]
@@ -178,13 +181,13 @@ def anneal_swap_Metropolis():
         while ii <= nstep:
             ii+=1
             ir=int(N*rand.rand())
-            swap(ir,ir+1,N)
-            new=lenght(N)
+            swap(ir,ir+1,N, city)
+            new=lenght(N, city)
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
             else:
-                swap(ir+1,ir,N)
+                swap(ir+1,ir,N, city)
             
 #         print "Temperatura",T
         Tem.append(T)
@@ -193,9 +196,9 @@ def anneal_swap_Metropolis():
         if acce==0: break
         T = T*alpha
 
-def anneal_swap_distance(N, alpha, T):
-    global city, citynum, Tem, accelist
-    old=lenght(N)
+def anneal_swap_distance(N, alpha, T, city):
+    global citynum, Tem, accelist
+    old=lenght(N,city)
     T_min = 0.1
     Tem=[]
     accelist=[]
@@ -206,7 +209,7 @@ def anneal_swap_distance(N, alpha, T):
             ii+=1
             ir=int(N*rand.rand())
             swap(ir,ir+1,N)
-            new=lenght(N)
+            new=lenght(N,city)
             if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
@@ -218,9 +221,9 @@ def anneal_swap_distance(N, alpha, T):
         T = T*alpha
         accelist.append(float(acce)/nstep)
 
-def anneal_PG_Metropolis(N, alpha, T):
-    global city, citynum, Tem, accelist
-    old=lenght(N)
+def anneal_PG_Metropolis(N, alpha, T, city):
+    global citynum, Tem, accelist
+    old=lenght(N, city)
     T_min = 0.1
     Tem=[]
     accelist=[]
@@ -237,11 +240,11 @@ def anneal_PG_Metropolis(N, alpha, T):
             y=int(N*rand.rand())
             z=int(N*rand.rand())
             prunegraft(x,y,z) #si applica il metodo
-            new=lenght(N)
+            new=lenght(N, city)
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
-                new=lenght(N)
+                new=lenght(N, city)
             else:
                 citynum=save #si torna alla citynum originaria
         
@@ -252,12 +255,12 @@ def anneal_PG_Metropolis(N, alpha, T):
         if acce==0: break
         T = T*alpha
 
-def anneal_PG_distance(N, alpha, T):
-    global city, citynum, Tem, accelist
+def anneal_PG_distance(N, alpha, T, city):
+    global citynum, Tem, accelist
     Tem=[]
     accelist=[]
-    old=lenght(N)
-    T_min = 0.1#0.00001
+    old=lenght(N, city)
+    T_min = 0.1
     nstep=500
     while T > T_min:
         rand.seed(); acce=0; ii=0
@@ -270,12 +273,12 @@ def anneal_PG_distance(N, alpha, T):
             y=int(N*rand.rand())
             z=int(N*rand.rand())
             prunegraft(x,y,z)
-            new=lenght(N)
+            new=lenght(N, city)
             
             if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
-                new=lenght(N)
+                new=lenght(N, city)
             else:
                 citynum=save
             
