@@ -12,15 +12,8 @@ import configparser
 config = configparser.ConfigParser()
 config.read('input.txt')
 
-N = int( config.get('parameters', 'N') )
+N = config.getint('parameters', 'N')
 citynum = list(range(N))
-'''
-iterations = int( config.get('parameters', 'iterations') )
-nstep = int( config.get('parameters', 'nstep') )
-T_min = float( config.get('parameters', 'T_min') )
-T = float( config.get('parameters', 'T') )
-alpha = float( config.get('parameters', 'alpha') )
-'''
 
 def travel(N):
     '''
@@ -35,14 +28,14 @@ def travel(N):
     return city
 
 
-def lenght(N, city):
+def lenght(N, city, citynum):
     '''
     Calculates the lenght of the travel.
     Parameters:
         N: number of cities to consider.
         city: coordinates of the cities.
     '''
-    #global citynum
+
     leng=0.
     for i in range(N):
         dum=0.;
@@ -54,14 +47,14 @@ def lenght(N, city):
     return leng
 
 
-def plpath(N, city):
+def plpath(N, city, citynum):
     '''
     Plots the followed path.
     Parameters:
         N: number of cities to consider.
         city: coordinates of the cities.
     '''
-    #global citynum
+
     dump=np.zeros((2,N+1))
     for k in range(N):
         for i in (0,1):
@@ -75,12 +68,12 @@ def plpath(N, city):
     plt.show()
  
     
-def confronto(accelist, Tem):
+def acceptance_plot(accelist, Tem):
     '''
     Plots the acceptance rate as a function of the temperature.
     '''
-    #global accelist, Tem
-    plt.title("Moves acceptance rate vs. temperature")
+
+    plt.title("Moves acceptance rate vs. temperature, 1st iteration")
     plt.xlabel("Temperature (arb. units)")
     plt.ylabel("Moves acceptance rate (%)")    
     plt.plot(Tem,accelist)
@@ -90,20 +83,21 @@ def confronto(accelist, Tem):
 
 #--------------------------------------------------------------------------|
     
-def breverse(x,y):
+def breverse(x,y, citynum):
     '''
     Executes the block reverse method.
     Parameters:
         x, y: two randomly generated numbers between 0 and N.
     '''
-    #global citynum
+
     j=max(x,y)
     i=min(x,y)
     dummy=citynum[i:j+1]
     citynum[i:j+1]=dummy[::-1] # ::-1 reverses the order of the list
+    return citynum
     
 
-def swap(i,j,N, city):
+def swap(i,j,N, citynum):
     '''
     Executes the swap method.
     Parameters:
@@ -111,21 +105,20 @@ def swap(i,j,N, city):
         j: i+1.
     '''
 
-    #global citynum
-    i=i%N; j=j%N
-    salva=citynum[i]
+    i=i%N; j=j%N    # In order not to get and IndexError
+    save=citynum[i]
     citynum[i]=citynum[j]
-    citynum[j]=salva
+    citynum[j]=save
+    return citynum
 
 
-def prunegraft(x,y,z):
+def prunegraft(x,y,z, citynum):
     '''
     Executes the block reverse method.
     Parameters:
         x, y, z: three randomly generated numbers between 0 and N.
     '''
 
-    #global citynum
     i=min(x,y)
     j=max(x,y)
     k=z
@@ -147,12 +140,13 @@ def prunegraft(x,y,z):
         dummy=citynum[i:j]
         for m in range(len(dummy)):
             citynum.insert(k+m,dummy[m])
-        del citynum[i:j]
+        del citynum[i:j]        
+    return citynum
  
        
 #--------------------------------------------------------------------------|
         
-def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, Tem, accelist):
+def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum):
     '''
     Executes the annealing procedure by using the block reverse method,
     and the minimization of the distance as the move acceptance criterion.
@@ -166,31 +160,32 @@ def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, Tem, accelist):
         Tem: list containing the temperatures.
         accelist: list containing the acceptance rate for each temperature.        
     '''
-    #global citynum
-    old=lenght(N, city)
+    Tem = []
+    accelist = []
+    old=lenght(N, city, citynum)
     while T > T_min:
         rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
             x=int(N*rand.rand())
             y=int(N*rand.rand())
-            breverse(x,y)
-            new=lenght(N, city) 
+            citynum=breverse(x,y, citynum)
+            new=lenght(N, city, citynum) 
             if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
-                new=lenght(N, city)
+                new=lenght(N, city, citynum)
             else:
-                breverse(y,x) #inverto nuovemente,
-#         print "T",T
+                citynum=breverse(y,x, citynum) #inverto nuovamente,
+                
         Tem.append(T)
-#         print "Acce/Nstep", float(acce)/nstep
         accelist.append(100*float(acce)/nstep)
         if acce==0: break
         T = T*alpha
+    return citynum, accelist, Tem
  
        
-def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, Tem, accelist):
+def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
     '''
     Executes the annealing procedure by using the block reverse method,
     and the Metropolis algorithm as the move acceptance criterion.
@@ -204,31 +199,31 @@ def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, Tem, accelist):
         Tem: list containing the temperatures.
         accelist: list containing the acceptance rate for each temperature.        
     '''
-    #global citynum
-    old=lenght(N, city)
+    Tem = []
+    accelist = []
+    old=lenght(N, city, citynum)
     while T > T_min:
         rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
             x=int(N*rand.rand())
             y=int(N*rand.rand())
-            breverse(x,y)
-            new=lenght(N, city)
+            citynum=breverse(x,y, citynum)
+            new=lenght(N, city, citynum)
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
-                new=lenght(N,city)
+                new=lenght(N,city, citynum)
             else:
-                breverse(y,x)
-#         print "T",T
+                citynum=breverse(x,y, citynum)
         Tem.append(T)
-#         print "Acce/Nstep", float(acce)/nstep
         accelist.append(100*float(acce)/nstep)
         if acce==0: break
         T = T*alpha   
+    return citynum, accelist, Tem
 
         
-def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, Tem, accelist):
+def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, citynum):
     '''
     Executes the annealing procedure by using the swap method,
     and the Metropolis algorithm as the move acceptance criterion.
@@ -242,29 +237,30 @@ def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, Tem, accelist):
         Tem: list containing the temperatures.
         accelist: list containing the acceptance rate for each temperature.        
     '''
-    old=lenght(N, city)
+    Tem=[]
+    accelist=[]
+    old=lenght(N, city, citynum)
     while T > T_min:
         rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
             ir=int(N*rand.rand())
-            swap(ir,ir+1,N, city)
-            new=lenght(N, city)
+            citynum = swap(ir,ir+1,N, citynum)
+            new=lenght(N, city, citynum)
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
             else:
-                swap(ir+1,ir,N, city)
+                citynum = swap(ir+1,ir,N, citynum)
             
-#         print "Temperatura",T
         Tem.append(T)
-#         print "Prove accettate/nstep", float(acce)/nstep
         accelist.append(100*float(acce)/nstep)
         if acce==0: break
         T = T*alpha
+    return citynum, accelist, Tem
 
 
-def anneal_swap_distance(N, alpha, T, city, T_min, nstep, Tem, accelist):
+def anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum):
     '''
     Executes the annealing procedure by using the swap method,
     and the minimization of the distance as the move acceptance criterion.
@@ -278,27 +274,30 @@ def anneal_swap_distance(N, alpha, T, city, T_min, nstep, Tem, accelist):
         Tem: list containing the temperatures.
         accelist: list containing the acceptance rate for each temperature.        
     '''
-    old=lenght(N,city)
+    Tem=[]
+    accelist=[]
+    old=lenght(N,city, citynum)
     while T > T_min:
         rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
             ir=int(N*rand.rand())
-            swap(ir,ir+1,N, city)
-            new=lenght(N,city)
+            citynum = swap(ir,ir+1,N, citynum)
+            new=lenght(N,city, citynum)
             if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
             else:
-                swap(ir+1,ir,N, city)
+                citynum = swap(ir+1,ir,N, citynum)
         
         if acce==0: break
         Tem.append(T)
         T = T*alpha
         accelist.append(float(acce)/nstep)
+    return citynum, accelist, Tem
 
 
-def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, Tem, accelist, citynum):
+def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
     '''
     Executes the annealing procedure by using the prune and graft method,
     and the Metropolis algorithm as the move acceptance criterion.
@@ -314,38 +313,36 @@ def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, Tem, accelist, citynum
         citynum: list containing the number associated to each city,
                  and their visiting order (i.e. the list index number).
     '''
-    #global citynum
-    old=lenght(N, city)
-    
+    Tem = []
+    accelist = []
+    old=lenght(N, city, citynum)
     while T > T_min:
         rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
-#si crea una citynum d'appoggio nella quale salvare la citynum originaria            
+#si crea una lista d'appoggio nella quale salvare la citynum originaria            
             save=[]
             for m in range(N):
                 save.append(citynum[m])
             x=int(N*rand.rand())
             y=int(N*rand.rand())
             z=int(N*rand.rand())
-            prunegraft(x,y,z) #si applica il metodo
-            new=lenght(N, city)
+            citynum = prunegraft(x,y,z, citynum) #si applica il metodo
+            new=lenght(N, city, citynum)
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
-                new=lenght(N, city)
+                new=lenght(N, city, citynum)
             else:
                 citynum=save #si torna alla citynum originaria
         
-#         print "T",T
         Tem.append(T)
-#         print "Acce/Nstep", float(acce)/nstep
         accelist.append(100*float(acce)/nstep)
         if acce==0: break
         T = T*alpha
+    return citynum, accelist, Tem
 
-
-def anneal_PG_distance(N, alpha, T, city, T_min, nstep, Tem, accelist, citynum):
+def anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum):
     '''
     Executes the annealing procedure by using the prune and graft method,
     and the Metropolis algorithm as the move acceptance criterion.
@@ -362,8 +359,9 @@ def anneal_PG_distance(N, alpha, T, city, T_min, nstep, Tem, accelist, citynum):
                  and their visiting order (i.e. the list index number)
     '''
 
-    #global citynum
-    old=lenght(N, city)
+    Tem = []
+    accelist = []
+    old=lenght(N, city, citynum)
     while T > T_min:
         rand.seed(); acce=0; ii=0
         while ii <= nstep:
@@ -374,19 +372,18 @@ def anneal_PG_distance(N, alpha, T, city, T_min, nstep, Tem, accelist, citynum):
             x=int(N*rand.rand())
             y=int(N*rand.rand())
             z=int(N*rand.rand())
-            prunegraft(x,y,z)
-            new=lenght(N, city)
+            citynum = prunegraft(x,y,z, citynum)
+            new=lenght(N, city, citynum)
             
             if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
-                new=lenght(N, city)
+                new=lenght(N, city, citynum)
             else:
                 citynum=save
             
-#         print "T",T
         Tem.append(T)
-#         print "Acce/Nstep", float(acce)/nstep
         accelist.append(100*float(acce)/nstep)
         if acce==0: break
-        T = T*alpha        
+        T = T*alpha  
+    return citynum, accelist, Tem

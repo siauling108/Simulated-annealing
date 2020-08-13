@@ -17,21 +17,21 @@ config = configparser.ConfigParser()
 config.read('input.txt')
 #config.read(sys.argv[1])
 
-N = int( config.get('parameters', 'N') )
-iterations = int( config.get('parameters', 'iterations') )
-nstep = int( config.get('parameters', 'nstep') )
-T_min = float( config.get('parameters', 'T_min') )
-T = float( config.get('parameters', 'T') )
-alpha = float( config.get('parameters', 'alpha') )
+N = config.getint('parameters', 'N') 
+iterations = config.getint('parameters', 'iterations')
+nstep = config.getint('parameters', 'nstep')
+T_min = config.getfloat('parameters', 'T_min')
+T = config.getfloat('parameters', 'T')
+alpha = config.getfloat('parameters', 'alpha')
 
-Tem = []
-accelist = []
+#Tem = []
+#accelist = []
 city = functions.travel(N)
 citynum = list(range(N))
-start=functions.lenght(N, city)
+start=functions.lenght(N, city, citynum)
 print('Initial distance:',start)
 distances=[start]
-functions.plpath(N, city)
+functions.plpath(N, city, citynum)
 
 '''
 OPTIONS (RAW)
@@ -40,18 +40,18 @@ Criteria: Metropolis, distance
 '''
 
 for ii in range(iterations):
-    functions.anneal_BRev_distance(N, alpha, T, city, T_min, nstep, Tem, accelist)
-    #functions.anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, Tem, accelist) 
-    #functions.anneal_swap_Metropolis(N, alpha, T, city, T_min, nstep, Tem, accelist) #comp. demanding
-    #functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, Tem, accelist) #ratio vs T??
-    #functions.anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, Tem, accelist, citynum) # NON FUNZ
-    #functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, Tem, accelist, citynum) # NON FUNZ
-    
+    #citynum, accelist, Tem=functions.anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum)
+    #citynum, accelist, Tem=functions.anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citynum) 
+    #citynum, accelist, Tem=functions.anneal_swap_Metropolis(N, alpha, T, city, T_min, nstep, citynum) #comp. demanding
+    citynum, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum) #BOH
+    #citynum, accelist, Tem=functions.anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum)
+    #citynum, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum)
+
     if ii==0:
-        functions.confronto(accelist, Tem)
-    distances.append(functions.lenght(N, city))
+        functions.acceptance_plot(accelist, Tem)
+    distances.append(functions.lenght(N, city, citynum))
     print('Current distance:',distances[ii+1],', Iteration:',ii+1)
-    functions.plpath(N, city)
+    functions.plpath(N, city, citynum)
 if iterations>1:
     plt.figure(2)
     plt.title("Current distance vs. # of iterations")
@@ -62,5 +62,5 @@ if iterations>1:
     plt.grid()
 print('Final distance:',distances[-1])
 plt.show()
-print("Percentage decrease of the distance", (max(distances)-min(distances))/max(distances)*100., "%")
+print("Percentage decrease of the distance", (distances[0]-distances[-1])/distances[0]*100., "%")
 #print("Percentage decrease of the distance", (min(distances)/max(distances))*100., "%")
