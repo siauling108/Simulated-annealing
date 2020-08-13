@@ -4,8 +4,6 @@ Created on Sun Aug  9 09:53:20 2020
 
 @author: marco
 """
-import numpy as np
-import numpy.random as rand
 import matplotlib.pyplot as plt
 import configparser
 #import sys
@@ -43,7 +41,7 @@ for ii in range(iterations):
     #citynum, accelist, Tem=functions.anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum)
     #citynum, accelist, Tem=functions.anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citynum) 
     #citynum, accelist, Tem=functions.anneal_swap_Metropolis(N, alpha, T, city, T_min, nstep, citynum) #comp. demanding
-    citynum, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum) #BOH
+    #citynum, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum) 
     #citynum, accelist, Tem=functions.anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum)
     #citynum, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum)
 

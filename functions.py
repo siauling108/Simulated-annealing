@@ -105,7 +105,7 @@ def swap(i,j,N, citynum):
         j: i+1.
     '''
 
-    i=i%N; j=j%N    # In order not to get and IndexError
+    #i=i%N; j=j%N
     save=citynum[i]
     citynum[i]=citynum[j]
     citynum[j]=save
@@ -245,14 +245,18 @@ def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, citynum):
         while ii <= nstep:
             ii+=1
             ir=int(N*rand.rand())
-            citynum = swap(ir,ir+1,N, citynum)
+            ir2=int(N*rand.rand())
+            while ir>(N-1) and ir2>(N-1) : # In order not to get and IndexError
+                ir=int(N*rand.rand())
+                ir2=int(N*rand.rand())
+            citynum = swap(ir,ir2,N, citynum)
             new=lenght(N, city, citynum)
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
+                new=lenght(N, city, citynum)
             else:
-                citynum = swap(ir+1,ir,N, citynum)
-            
+                citynum = swap(ir2,ir,N, citynum)            
         Tem.append(T)
         accelist.append(100*float(acce)/nstep)
         if acce==0: break
@@ -282,13 +286,18 @@ def anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum):
         while ii <= nstep:
             ii+=1
             ir=int(N*rand.rand())
-            citynum = swap(ir,ir+1,N, citynum)
+            ir2=int(N*rand.rand())
+            while ir>(N-1) and ir2>(N-1) : # In order not to get and IndexError
+                ir=int(N*rand.rand())
+                ir2=int(N*rand.rand())
+            citynum = swap(ir,ir2,N, citynum)
             new=lenght(N,city, citynum)
             if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
+                new=lenght(N, city, citynum)
             else:
-                citynum = swap(ir+1,ir,N, citynum)
+                citynum = swap(ir2,ir,N, citynum)
         
         if acce==0: break
         Tem.append(T)
