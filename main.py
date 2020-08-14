@@ -49,8 +49,8 @@ for ii in range(iterations):
     tot_acceptance[ii][:]=accelist
     distances.append(functions.length(N, city, citynum))
     print('Current distance:',distances[ii+1],', Iteration:',ii+1)
-    functions.path_plot(N, city, citynum)
 
+functions.path_plot(N, city, citynum)
 functions.acceptance_plot(tot_acceptance, Tem, iterations)
 functions.dist_optimization(distances)
     

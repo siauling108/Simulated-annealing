@@ -12,6 +12,12 @@ import configparser
 config = configparser.ConfigParser()
 config.read('input.txt')
 
+file1 = config.get('files','distances')
+file2 = config.get('files','travel')
+file3 = config.get('files','Tem')
+file4 = config.get('files','tot_accept')
+
+
 N = config.getint('parameters', 'N')
 citynum = list(range(N))
 
@@ -33,6 +39,7 @@ def travel(N):
 def length(N, city, citynum):
     '''
     Calculates the length of the travel.
+    Saves the lenght in a file.
     Parameters:
         N: number of cities to consider.
         city: coordinates of the cities.
@@ -50,6 +57,7 @@ def length(N, city, citynum):
             iloc2=int(citynum[i-1])
             dum+=(city[icoo][iloc1]-city[icoo][iloc2])**2
         leng+=np.sqrt(dum)
+    np.save(file1, leng)
     return leng
 
 
@@ -58,7 +66,7 @@ def length(N, city, citynum):
 
 def path_plot(N, city, citynum):
     '''
-    Plots the followed path.
+    Calculates the path, saves it and plots it.
     Parameters:
         N: number of cities to consider.
         city: coordinates of the cities.
@@ -71,7 +79,10 @@ def path_plot(N, city, citynum):
         for i in (0,1):
             dump[i][k]=city[i][citynum[k]]
     dump[0][N]=city[0][citynum[0]]
-    dump[1][N]=city[1][citynum[0]]
+    dump[1][N]=city[1][citynum[0]]  
+    
+    np.save(file1,dump)
+    
     plt.figure(1)
     plt.title("Followed path")
     plt.plot (dump[0],dump[1],'o-')
@@ -96,7 +107,7 @@ def acceptance_plot(tot_acceptance, Tem, iterations):
     lab=[]
     for i in range(iterations):        
         plt.plot(Tem,tot_acceptance[i])
-        lab.append(i+1)        
+        lab.append(i+1)   
     plt.legend(lab)
     plt.grid()
     plt.show()
@@ -151,7 +162,7 @@ def breverse(x,y, citynum):
     j=max(x,y)
     i=min(x,y)
     dummy=citynum[i:j+1]
-    citynum[i:j+1]=dummy[::-1] # ::-1 reverses the order of the list
+    citynum[i:j+1]=dummy[::-1] 
     return citynum
     
 
@@ -250,10 +261,12 @@ def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum):
                 acce+=1
                 new=length(N, city, citynum)
             else:
-                citynum=breverse(y,x, citynum) #inverto nuovamente,
+                citynum=breverse(y,x, citynum) 
                 
         Tem.append(T)
         accelist.append(100*float(acce)/nstep)
+        np.save(file3, Tem)
+        np.save(file4, accelist)
         if acce==0: break
         T = T*alpha
     return citynum, accelist, Tem
@@ -421,8 +434,7 @@ def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
         rand.seed(); acce=0; ii=0
         while ii <= nstep:
             ii+=1
-#si crea una lista d'appoggio nella quale salvare la citynum originaria            
-            save=[]
+            save=[]    #needed in case of move rejection
             for m in range(N):
                 save.append(citynum[m])
             x=int(N*rand.rand())
@@ -432,14 +444,14 @@ def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
                 x=int(N*rand.rand())
                 y=int(N*rand.rand())
                 z=int(N*rand.rand())
-            citynum = prunegraft(x,y,z, citynum) #si applica il metodo
+            citynum = prunegraft(x,y,z, citynum) 
             new=length(N, city, citynum)
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
                 new=length(N, city, citynum)
             else:
-                citynum=save #si torna alla citynum originaria
+                citynum=save
         
         Tem.append(T)
         accelist.append(100*float(acce)/nstep)

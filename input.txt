@@ -5,3 +5,13 @@ T_min = 0.1
 T = 5.
 alpha = 0.8
 nstep = 500
+
+[files]
+travel:     ./data/travel.npy
+tot_accept: ./data/tot_accept.npy
+Tem:        ./data/Tem.npy
+distances:  ./data/distances.npy
+
+path_pl:         ./plots/path_plot.png
+acc_pl:          ./plots/acceptance_plot.png
+optimization_pl: ./plots/distance_opt.png
