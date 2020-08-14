@@ -81,24 +81,34 @@ def path_plot(N, city, citynum):
     plt.show()
  
     
-def acceptance_plot(accelist, Tem):
+def acceptance_plot(tot_acceptance, Tem, iterations):
     '''
-    Plots the acceptance rate as a function of the temperature.
+    Plots the acceptance rate as a function of the temperature for each iteration.
     Parameters:
         Tem: list containing the temperatures.
-        accelist: list containing the acceptance rate for each temperature.        
+        accelist: list containing the acceptance rate for each temperature. 
+        iterations: number of the iterations to execute.
     '''
 
-    plt.title("Moves acceptance rate vs. temperature, 1st iteration")
+    plt.title("Moves acceptance rate vs. temperature")
     plt.xlabel("Temperature (arb. units)")
-    plt.ylabel("Moves acceptance rate (%)")    
-    plt.plot(Tem,accelist)
-    plt.legend()
+    plt.ylabel("Moves acceptance rate (%)") 
+    lab=[]
+    for i in range(iterations):        
+        plt.plot(Tem,tot_acceptance[i])
+        lab.append(i+1)        
+    plt.legend(lab)
     plt.grid()
     plt.show()
 
 
 def dist_optimization(distances):
+    '''
+    Plots the travel length as a function of the number of iterations.
+    Parameters:
+        distances: travel length at a given iteration.
+    '''
+    
     plt.title("Current distance vs. # of iterations")
     plt.xlabel("Iteration")
     plt.ylabel("Current distance (arb. units)")
@@ -106,6 +116,22 @@ def dist_optimization(distances):
     plt.grid()
     plt.show()
 
+def Tem_length(T, T_min, alpha):
+    '''
+    Gives the number of the temperatures considered in the annealing process.
+    Parameters:
+        T: maximum "temperature" of the system.
+        T_min: minimum temperature.
+        alpha: T scaling parameter.
+    Returns:
+        The number of temperatures considered.
+    '''
+    count=0
+    while T > T_min:
+        count+=1
+        T=T*alpha
+    return count
+    
    
 
 #--------------------------------------------------------------------------|
@@ -193,10 +219,10 @@ def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum):
     and the minimization of the distance as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: rescaling parameter for the temperature.
-        T: "temperature" of the system.
+        alpha: temperature scaling parameter.
+        T: maximum "temperature" of the system.
         city: coordinates of the cities.
-        T_min: temperature minimum.
+        T_min: minimum temperature.
         nstep: number of moves for a single iteration.
         citynum: list containing the number associated to each city,
                  and their visiting order (i.e. the list index number).        
@@ -239,10 +265,10 @@ def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: rescaling parameter for the temperature.
-        T: "temperature" of the system.
+        alpha: temperature scaling parameter.
+        T: maximum "temperature" of the system.
         city: coordinates of the cities.
-        T_min: temperature minimum.
+        T_min: minimum temperature.
         nstep: number of moves for a single iteration.
         citynum: list containing the number associated to each city,
                  and their visiting order (i.e. the list index number).        
@@ -284,10 +310,10 @@ def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, citynum):
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: rescaling parameter for the temperature.
-        T: "temperature" of the system.
+        alpha: temperature scaling parameter.
+        T: maximum "temperature" of the system.
         city: coordinates of the cities.
-        T_min: temperature minimum.
+        T_min: minimum temperature.
         nstep: number of moves for a single iteration.
         citynum: list containing the number associated to each city,
                  and their visiting order (i.e. the list index number).        
@@ -330,10 +356,10 @@ def anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum):
     and the minimization of the distance as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: rescaling parameter for the temperature.
-        T: "temperature" of the system.
+        alpha: temperature scaling parameter.
+        T: maximum "temperature" of the system.
         city: coordinates of the cities.
-        T_min: temperature minimum.
+        T_min: minimum temperature.
         nstep: number of moves for a single iteration.
         citynum: list containing the number associated to each city,
                  and their visiting order (i.e. the list index number).        
@@ -376,10 +402,10 @@ def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: rescaling parameter for the temperature.
-        T: "temperature" of the system.
+        alpha: temperature scaling parameter.
+        T: maximum "temperature" of the system.
         city: coordinates of the cities.
-        T_min: temperature minimum.
+        T_min: minimum temperature.
         nstep: number of moves for a single iteration.
         citynum: list containing the number associated to each city,
                  and their visiting order (i.e. the list index number).        
@@ -427,10 +453,10 @@ def anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum):
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: rescaling parameter for the temperature.
-        T: "temperature" of the system.
+        alpha: temperature scaling parameter.
+        T: maximum "temperature" of the system.
         city: coordinates of the cities.
-        T_min: temperature minimum.
+        T_min: minimum temperature.
         nstep: number of moves for a single iteration.
         citynum: list containing the number associated to each city,
                  and their visiting order (i.e. the list index number).        

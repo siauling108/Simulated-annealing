@@ -4,6 +4,7 @@ Created on Sun Aug  9 09:53:20 2020
 
 @author: marco
 """
+import numpy as np
 import matplotlib.pyplot as plt
 import configparser
 #import sys
@@ -22,14 +23,15 @@ T_min = config.getfloat('parameters', 'T_min')
 T = config.getfloat('parameters', 'T')
 alpha = config.getfloat('parameters', 'alpha')
 
-#Tem = []
-#accelist = []
 city = functions.travel(N)
 citynum = list(range(N))
 start=functions.length(N, city, citynum)
 print('Initial distance:',start)
 distances=[start]
 functions.path_plot(N, city, citynum)
+
+T_len = functions.Tem_length(T, T_min, alpha)
+tot_acceptance = np.zeros((iterations, T_len))
 
 '''
 OPTIONS (RAW)
@@ -44,16 +46,13 @@ for ii in range(iterations):
     #citynum, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum) 
     #citynum, accelist, Tem=functions.anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum)
     #citynum, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum)
-
-    if ii==0:
-        functions.acceptance_plot(accelist, Tem)
+    tot_acceptance[ii][:]=accelist
     distances.append(functions.length(N, city, citynum))
     print('Current distance:',distances[ii+1],', Iteration:',ii+1)
     functions.path_plot(N, city, citynum)
-if iterations>1:
-    plt.figure(2)
-    functions.dist_optimization(distances)
+
+functions.acceptance_plot(tot_acceptance, Tem, iterations)
+functions.dist_optimization(distances)
     
 print('Final distance:',distances[-1])
-#plt.show()
 print("Percentage decrease of the distance", (distances[0]-distances[-1])/distances[0]*100., "%")
