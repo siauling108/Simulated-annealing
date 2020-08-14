@@ -29,7 +29,7 @@ citynum = list(range(N))
 start=functions.length(N, city, citynum)
 print('Initial distance:',start)
 distances=[start]
-functions.plpath(N, city, citynum)
+functions.path_plot(N, city, citynum)
 
 '''
 OPTIONS (RAW)
@@ -38,10 +38,10 @@ Criteria: Metropolis, distance
 '''
 
 for ii in range(iterations):
-    #citynum, accelist, Tem=functions.anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum)
+    citynum, accelist, Tem=functions.anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum)
     #citynum, accelist, Tem=functions.anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citynum) 
     #citynum, accelist, Tem=functions.anneal_swap_Metropolis(N, alpha, T, city, T_min, nstep, citynum) #BOH
-    citynum, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum) 
+    #citynum, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum) 
     #citynum, accelist, Tem=functions.anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum)
     #citynum, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum)
 
@@ -49,16 +49,11 @@ for ii in range(iterations):
         functions.acceptance_plot(accelist, Tem)
     distances.append(functions.length(N, city, citynum))
     print('Current distance:',distances[ii+1],', Iteration:',ii+1)
-    functions.plpath(N, city, citynum)
+    functions.path_plot(N, city, citynum)
 if iterations>1:
     plt.figure(2)
-    plt.title("Current distance vs. # of iterations")
-    plt.xlabel("Iteration")
-    plt.ylabel("Current distance (arb. units)")
-    plt.plot(distances)
-    plt.legend()
-    plt.grid()
+    functions.dist_optimization(distances)
+    
 print('Final distance:',distances[-1])
-plt.show()
+#plt.show()
 print("Percentage decrease of the distance", (distances[0]-distances[-1])/distances[0]*100., "%")
-#print("Percentage decrease of the distance", (min(distances)/max(distances))*100., "%")

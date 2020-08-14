@@ -53,7 +53,10 @@ def length(N, city, citynum):
     return leng
 
 
-def plpath(N, city, citynum):
+#-------------------------------------------------------------------------------|
+
+
+def path_plot(N, city, citynum):
     '''
     Plots the followed path.
     Parameters:
@@ -94,6 +97,16 @@ def acceptance_plot(accelist, Tem):
     plt.grid()
     plt.show()
 
+
+def dist_optimization(distances):
+    plt.title("Current distance vs. # of iterations")
+    plt.xlabel("Iteration")
+    plt.ylabel("Current distance (arb. units)")
+    plt.plot(distances)
+    plt.grid()
+    plt.show()
+
+   
 
 #--------------------------------------------------------------------------|
  
