@@ -1,6 +1,6 @@
 [parameters]
-N = 50
-iterations = 10
+N = 100
+iterations = 5
 T_min = 0.1
 T = 5.
 alpha = 0.8
