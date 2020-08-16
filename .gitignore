@@ -1,4 +1,4 @@
 example.ini
 __pycache__/
-data/**
-plots/**
+data/
+plots/

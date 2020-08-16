@@ -204,6 +204,7 @@ def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum):
                 y=int(N*rand.rand())
             citynum=breverse(x,y, citynum)
             new=length(N, city, citynum) 
+            
             if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
@@ -213,7 +214,7 @@ def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum):
                 
         Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        if acce==0: break
+        #if acce==0: break
         T = T*alpha
     return citynum, accelist, Tem
  
@@ -250,15 +251,17 @@ def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
                 y=int(N*rand.rand())
             citynum=breverse(x,y, citynum)
             new=length(N, city, citynum)
+            
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
                 new=length(N,city, citynum)
             else:
                 citynum=breverse(x,y, citynum)
+                
         Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        if acce==0: break
+        #if acce==0: break
         T = T*alpha   
     return citynum, accelist, Tem
 
@@ -295,6 +298,7 @@ def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, citynum):
                 ir2=int(N*rand.rand())
             citynum = swap(ir,ir2,N, citynum)
             new=length(N, city, citynum)
+            
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
@@ -302,9 +306,10 @@ def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, citynum):
             else:
                 citynum = swap(ir2,ir,N, citynum)   
                 print('w=',np.exp(-(new-old)/T))
+                
         Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        if acce==0: break
+        #if acce==0: break
         T = T*alpha
     return citynum, accelist, Tem
 
@@ -341,6 +346,7 @@ def anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum):
                 ir2=int(N*rand.rand())
             citynum = swap(ir,ir2,N, citynum)
             new=length(N,city, citynum)
+            
             if np.exp(-(new-old)/T) >= 1:
                 old=new
                 acce+=1
@@ -350,7 +356,7 @@ def anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum):
         
         Tem.append(T)
         accelist.append(float(acce)/nstep)
-        if acce==0: break
+        #if acce==0: break
         T = T*alpha
     return citynum, accelist, Tem
 
@@ -392,6 +398,7 @@ def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
                 z=int(N*rand.rand())
             citynum = prunegraft(x,y,z, citynum) 
             new=length(N, city, citynum)
+            
             if np.exp(-(new-old)/T) > rand.rand():
                 old=new
                 acce+=1
@@ -401,7 +408,7 @@ def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
         
         Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        if acce==0: break
+        #if acce==0: break
         T = T*alpha
     return citynum, accelist, Tem
 
@@ -453,6 +460,6 @@ def anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum):
             
         Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        if acce==0: break
+        #if acce==0: break
         T = T*alpha  
     return citynum, accelist, Tem
