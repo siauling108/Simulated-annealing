@@ -39,7 +39,6 @@ def travel(N):
 def length(N, city, citynum):
     '''
     Calculates the length of the travel.
-    Saves the lenght in a file.
     Parameters:
         N: number of cities to consider.
         city: coordinates of the cities.
@@ -57,16 +56,28 @@ def length(N, city, citynum):
             iloc2=int(citynum[i-1])
             dum+=(city[icoo][iloc1]-city[icoo][iloc2])**2
         leng+=np.sqrt(dum)
-    np.save(file1, leng)
     return leng
 
-
-#-------------------------------------------------------------------------------|
-
-
-def path_plot(N, city, citynum):
+def Tem_length(T, T_min, alpha):
     '''
-    Calculates the path, saves it and plots it.
+    Gives the number of the temperatures considered in the annealing process.
+    Parameters:
+        T: maximum "temperature" of the system.
+        T_min: minimum temperature.
+        alpha: T scaling parameter.
+    Returns:
+        The number of temperatures considered.
+    '''
+    count=0
+    while T > T_min:
+        count+=1
+        T=T*alpha
+    return count
+
+
+def get_path(N, city, citynum):
+    '''
+    Calculates an array with the optimized path.
     Parameters:
         N: number of cities to consider.
         city: coordinates of the cities.
@@ -74,18 +85,29 @@ def path_plot(N, city, citynum):
                  and their visiting order (i.e. the list index number).
     '''
 
-    dump=np.zeros((2,N+1))
+    path=np.zeros((2,N+1))
     for k in range(N):
         for i in (0,1):
-            dump[i][k]=city[i][citynum[k]]
-    dump[0][N]=city[0][citynum[0]]
-    dump[1][N]=city[1][citynum[0]]  
+            path[i][k]=city[i][citynum[k]]
+    path[0][N]=city[0][citynum[0]]
+    path[1][N]=city[1][citynum[0]]  
     
-    np.save(file1,dump)
+    return path
+
+
+#-------------------------------------------------------------------------------|
+
+
+def path_plot(path):
+    '''
+    Plots the followed path.
+    Parameters:
+        path: the path to be plotted.
+    '''
     
     plt.figure(1)
     plt.title("Followed path")
-    plt.plot (dump[0],dump[1],'o-')
+    plt.plot (path[0],path[1],'o-')
     plt.xlabel("x coordinate (arb. units)")
     plt.ylabel("y coordinate (arb. units)")    
     plt.grid()
@@ -125,24 +147,7 @@ def dist_optimization(distances):
     plt.ylabel("Current distance (arb. units)")
     plt.plot(distances)
     plt.grid()
-    plt.show()
-
-def Tem_length(T, T_min, alpha):
-    '''
-    Gives the number of the temperatures considered in the annealing process.
-    Parameters:
-        T: maximum "temperature" of the system.
-        T_min: minimum temperature.
-        alpha: T scaling parameter.
-    Returns:
-        The number of temperatures considered.
-    '''
-    count=0
-    while T > T_min:
-        count+=1
-        T=T*alpha
-    return count
-    
+    plt.show()    
    
 
 #--------------------------------------------------------------------------|
@@ -265,8 +270,6 @@ def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum):
                 
         Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        np.save(file3, Tem)
-        np.save(file4, accelist)
         if acce==0: break
         T = T*alpha
     return citynum, accelist, Tem

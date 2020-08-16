@@ -5,7 +5,6 @@ Created on Sun Aug  9 09:53:20 2020
 @author: marco
 """
 import numpy as np
-import matplotlib.pyplot as plt
 import configparser
 #import sys
 #from sys import argv
@@ -23,14 +22,17 @@ T_min = config.getfloat('parameters', 'T_min')
 T = config.getfloat('parameters', 'T')
 alpha = config.getfloat('parameters', 'alpha')
 
+file1 = config.get('files','distances')
+file2 = config.get('files','travel')
+file3 = config.get('files','Tem')
+file4 = config.get('files','tot_accept')
+
 city = functions.travel(N)
 citynum = list(range(N))
 start=functions.length(N, city, citynum)
 print('Initial distance:',start)
 distances=[start]
-functions.path_plot(N, city, citynum)
-
-T_len = functions.Tem_length(T, T_min, alpha)
+T_len = functions.Tem_length(T, T_min, alpha) #I need it in order to def. tot_acceptance
 tot_acceptance = np.zeros((iterations, T_len))
 
 '''
@@ -50,7 +52,16 @@ for ii in range(iterations):
     distances.append(functions.length(N, city, citynum))
     print('Current distance:',distances[ii+1],', Iteration:',ii+1)
 
-functions.path_plot(N, city, citynum)
+np.save(file1, distances)
+
+path = functions.get_path(N, city, citynum)
+np.save(file2, path)
+
+functions.path_plot(path)
+
+np.save(file3, Tem)
+np.save(file4, tot_acceptance)
+
 functions.acceptance_plot(tot_acceptance, Tem, iterations)
 functions.dist_optimization(distances)
     
