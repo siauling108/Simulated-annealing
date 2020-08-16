@@ -48,6 +48,7 @@ for ii in range(iterations):
     #citynum, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum) 
     #citynum, accelist, Tem=functions.anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum)
     #citynum, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum)
+
     tot_acceptance[ii][:]=accelist
     distances.append(functions.length(N, city, citynum))
     print('Current distance:',distances[ii+1],', Iteration:',ii+1)

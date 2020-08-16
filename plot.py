@@ -25,8 +25,6 @@ plot_c = config.get('files','optimization_pl')
 def dist_optimization():
     '''
     Plots the travel length as a function of the number of iterations.
-    Parameters:
-        distances: travel length at a given iteration.
     '''
     distances = np.load(file1)
     fig = plt.figure()
@@ -36,14 +34,13 @@ def dist_optimization():
     plt.plot(distances)
     plt.grid()
     plt.show()   
+    
     fig.savefig(plot_c)
     
     
 def path_plot():
     '''
     Plots the followed path.
-    Parameters:
-        path: the path to be plotted.
     '''
     
     path = np.load(file2)
@@ -55,6 +52,7 @@ def path_plot():
     plt.ylabel("y coordinate (arb. units)")    
     plt.grid()
     plt.show()
+    
     fig.savefig(plot_a)
 
  
@@ -62,10 +60,6 @@ def path_plot():
 def acceptance_plot(iterations):
     '''
     Plots the acceptance rate as a function of the temperature for each iteration.
-    Parameters:
-        Tem: list containing the temperatures.
-        accelist: list containing the acceptance rate for each temperature. 
-        iterations: number of the iterations to execute.
     '''
     Tem = np.load(file3)
     tot_acceptance = np.load(file4)
@@ -80,6 +74,7 @@ def acceptance_plot(iterations):
     plt.legend(lab)
     plt.grid()
     plt.show()
+    
     fig.savefig(plot_b)
 
 
