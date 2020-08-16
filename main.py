@@ -23,7 +23,7 @@ T = config.getfloat('parameters', 'T')
 alpha = config.getfloat('parameters', 'alpha')
 
 file1 = config.get('files','distances')
-file2 = config.get('files','travel')
+file2 = config.get('files','path')
 file3 = config.get('files','Tem')
 file4 = config.get('files','tot_accept')
 
@@ -52,18 +52,12 @@ for ii in range(iterations):
     distances.append(functions.length(N, city, citynum))
     print('Current distance:',distances[ii+1],', Iteration:',ii+1)
 
-np.save(file1, distances)
-
 path = functions.get_path(N, city, citynum)
+
+np.save(file1, distances)
 np.save(file2, path)
-
-functions.path_plot(path)
-
 np.save(file3, Tem)
 np.save(file4, tot_acceptance)
-
-functions.acceptance_plot(tot_acceptance, Tem, iterations)
-functions.dist_optimization(distances)
     
 print('Final distance:',distances[-1])
 print("Percentage decrease of the distance", (distances[0]-distances[-1])/distances[0]*100., "%")

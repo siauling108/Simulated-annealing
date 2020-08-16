@@ -6,17 +6,15 @@ Created on Sun Aug  9 11:51:01 2020
 """
 import numpy as np
 import numpy.random as rand
-import matplotlib.pyplot as plt
 import configparser
 
 config = configparser.ConfigParser()
 config.read('input.txt')
 
 file1 = config.get('files','distances')
-file2 = config.get('files','travel')
+file2 = config.get('files','path')
 file3 = config.get('files','Tem')
 file4 = config.get('files','tot_accept')
-
 
 N = config.getint('parameters', 'N')
 citynum = list(range(N))
@@ -95,63 +93,8 @@ def get_path(N, city, citynum):
     return path
 
 
-#-------------------------------------------------------------------------------|
+#------------------------------------------------------------------------------|
 
-
-def path_plot(path):
-    '''
-    Plots the followed path.
-    Parameters:
-        path: the path to be plotted.
-    '''
-    
-    plt.figure(1)
-    plt.title("Followed path")
-    plt.plot (path[0],path[1],'o-')
-    plt.xlabel("x coordinate (arb. units)")
-    plt.ylabel("y coordinate (arb. units)")    
-    plt.grid()
-    plt.show()
- 
-    
-def acceptance_plot(tot_acceptance, Tem, iterations):
-    '''
-    Plots the acceptance rate as a function of the temperature for each iteration.
-    Parameters:
-        Tem: list containing the temperatures.
-        accelist: list containing the acceptance rate for each temperature. 
-        iterations: number of the iterations to execute.
-    '''
-
-    plt.title("Moves acceptance rate vs. temperature")
-    plt.xlabel("Temperature (arb. units)")
-    plt.ylabel("Moves acceptance rate (%)") 
-    lab=[]
-    for i in range(iterations):        
-        plt.plot(Tem,tot_acceptance[i])
-        lab.append(i+1)   
-    plt.legend(lab)
-    plt.grid()
-    plt.show()
-
-
-def dist_optimization(distances):
-    '''
-    Plots the travel length as a function of the number of iterations.
-    Parameters:
-        distances: travel length at a given iteration.
-    '''
-    
-    plt.title("Current distance vs. # of iterations")
-    plt.xlabel("Iteration")
-    plt.ylabel("Current distance (arb. units)")
-    plt.plot(distances)
-    plt.grid()
-    plt.show()    
-   
-
-#--------------------------------------------------------------------------|
- 
     
 def breverse(x,y, citynum):
     '''
