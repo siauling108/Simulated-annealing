@@ -27,6 +27,18 @@ file2 = config.get('files','path')
 file3 = config.get('files','Tem')
 file4 = config.get('files','tot_accept')
 
+while True:
+    choice = input('''Choose the method + the acceptance criterion to be used in
+                   the annealing procedure:\n
+                       BD = block reverse, distance;\n
+                       BM = block reverse, Metropolis;\n
+                       SM = swap ,Metropolis;\n
+                       SD = swap, distance;\n
+                       PM = prune and graft, Metropolis;\n
+                       PD = prune and graft, distance.\n''')
+    if choice in ['BD', 'BM', 'SM', 'SD', 'PM', 'PD']:
+        break
+
 city = functions.travel(N)
 citynum = list(range(N))
 start=functions.length(N, city, citynum)
@@ -35,19 +47,19 @@ distances=[start]
 T_len = functions.Tem_length(T, T_min, alpha) #I need it in order to def. tot_acceptance
 tot_acceptance = np.zeros((iterations, T_len))
 
-'''
-OPTIONS (RAW)
-Moves: swap, block reverse, prune and graft
-Criteria: Metropolis, distance
-'''
-
 for ii in range(iterations):
-    citynum, accelist, Tem=functions.anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum)
-    #citynum, accelist, Tem=functions.anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citynum) 
-    #citynum, accelist, Tem=functions.anneal_swap_Metropolis(N, alpha, T, city, T_min, nstep, citynum) #BOH
-    #citynum, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum) 
-    #citynum, accelist, Tem=functions.anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum)
-    #citynum, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum)
+    if choice == 'BD': 
+        citynum, accelist, Tem=functions.anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum)
+    if choice == 'BM':
+        citynum, accelist, Tem=functions.anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citynum) 
+    if choice == 'SM':
+        citynum, accelist, Tem=functions.anneal_swap_Metropolis(N, alpha, T, city, T_min, nstep, citynum) #BOH
+    if choice == 'SD':
+        citynum, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum) 
+    if choice == 'PM':
+        citynum, accelist, Tem=functions.anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum)
+    if choice == 'PD':
+        citynum, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum)
 
     tot_acceptance[ii][:]=accelist
     distances.append(functions.length(N, city, citynum))
