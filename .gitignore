@@ -2,3 +2,4 @@ example.ini
 __pycache__/
 data/**
 plots/**
+.pytest_cache/
