@@ -6,14 +6,11 @@ Created on Sun Aug  9 09:53:20 2020
 """
 import numpy as np
 import configparser
-#import sys
-#from sys import argv
 import functions
 
 
 config = configparser.ConfigParser()
 config.read('input.txt')
-#config.read(sys.argv[1])
 
 N = config.getint('parameters', 'N') 
 iterations = config.getint('parameters', 'iterations')
@@ -28,7 +25,7 @@ file3 = config.get('files','Tem')
 file4 = config.get('files','tot_accept')
 
 while True:
-    choice = input('''Choose the method + the acceptance criterion to be used in
+    choice = input('''Choose the move type + the acceptance criterion to be used in
                    the annealing procedure:\n
                        BD = block reverse, distance;\n
                        BM = block reverse, Metropolis;\n
@@ -60,7 +57,8 @@ for ii in range(iterations):
         citynum, accelist, Tem=functions.anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum)
     if choice == 'PD':
         citynum, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum)
-
+    
+    print('Starting.')
     tot_acceptance[ii][:]=accelist
     distances.append(functions.length(N, city, citynum))
     print('Current distance:',distances[ii+1],', Iteration:',ii+1)

@@ -31,6 +31,7 @@ def travel(N):
     for i in range(N):
         for j in (0,1):
             city[j][i] = rand.rand()
+            
     return city
 
 
@@ -39,13 +40,12 @@ def length(N, city, citynum):
     Calculates the length of the travel.
     Parameters:
         N: number of cities to consider.
-        city: coordinates of the cities.
+        city: coordinates of the cities (array).
         citynum: list containing the number associated to each city,
                  and their visiting order (i.e. the list index number).
     Returns:
         leng: length of the travel.
     '''
-
     leng=0.
     for i in range(N):
         dum=0.;
@@ -54,6 +54,7 @@ def length(N, city, citynum):
             iloc2=int(citynum[i-1])
             dum+=(city[icoo][iloc1]-city[icoo][iloc2])**2
         leng+=np.sqrt(dum)
+        
     return leng
 
 def Tem_length(T, T_min, alpha):
@@ -70,6 +71,7 @@ def Tem_length(T, T_min, alpha):
     while T > T_min:
         count+=1
         T=T*alpha
+        
     return count
 
 
@@ -78,11 +80,10 @@ def get_path(N, city, citynum):
     Calculates an array with the optimized path.
     Parameters:
         N: number of cities to consider.
-        city: coordinates of the cities.
+        city: coordinates of the cities (array).
         citynum: list containing the number associated to each city,
                  and their visiting order (i.e. the list index number).
     '''
-
     path=np.zeros((2,N+1))
     for k in range(N):
         for i in (0,1):
@@ -98,7 +99,7 @@ def get_path(N, city, citynum):
     
 def breverse(x,y, citynum):
     '''
-    Executes the block reverse method.
+    Executes a block reverse move.
     Parameters:
         x, y: two randomly generated numbers between 0 and N-1.
         citynum: list containing the number associated to each city,
@@ -106,17 +107,17 @@ def breverse(x,y, citynum):
     Returns:
         citynum: updated citynum.
     '''
-
     j=max(x,y)
     i=min(x,y)
     dummy=citynum[i:j+1]
     citynum[i:j+1]=dummy[::-1] 
+    
     return citynum
     
 
 def swap(i,j,N, citynum):
     '''
-    Executes the swap method.
+    Executes a swap move.
     Parameters:
         i, j: two randomly generated numbers between 0 and N-1.
         N: number of cities to consider.
@@ -125,16 +126,16 @@ def swap(i,j,N, citynum):
     Returns:
         citynum: updated citynum.
     '''
-
     save=citynum[i]
     citynum[i]=citynum[j]
     citynum[j]=save
+    
     return citynum
 
 
 def prunegraft(x,y,z, citynum):
     '''
-    Executes the block reverse method.
+    Executes a prune and graft move.
     Parameters:
         x, y, z: three randomly generated numbers between 0 and N-1.
         citynum: list containing the number associated to each city,
@@ -143,7 +144,6 @@ def prunegraft(x,y,z, citynum):
         citynum: updated citynum.
 
     '''
-
     i=min(x,y)
     j=max(x,y)
     k=z
@@ -165,7 +165,8 @@ def prunegraft(x,y,z, citynum):
         dummy=citynum[i:j]
         for m in range(len(dummy)):
             citynum.insert(k+m,dummy[m])
-        del citynum[i:j]        
+        del citynum[i:j] 
+        
     return citynum
  
        
@@ -174,7 +175,7 @@ def prunegraft(x,y,z, citynum):
        
 def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum):
     '''
-    Executes the annealing procedure by using the block reverse method,
+    Executes the annealing procedure by using block reverse moves,
     and the minimization of the distance as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
@@ -216,12 +217,13 @@ def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citynum):
         accelist.append(100*float(acce)/nstep)
         #if acce==0: break
         T = T*alpha
+        
     return citynum, accelist, Tem
  
        
 def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
     '''
-    Executes the annealing procedure by using the block reverse method,
+    Executes the annealing procedure by using block reverse moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
@@ -262,13 +264,14 @@ def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
         Tem.append(T)
         accelist.append(100*float(acce)/nstep)
         #if acce==0: break
-        T = T*alpha   
+        T = T*alpha  
+        
     return citynum, accelist, Tem
 
         
 def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, citynum):
     '''
-    Executes the annealing procedure by using the swap method,
+    Executes the annealing procedure by using swap moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
@@ -311,12 +314,13 @@ def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, citynum):
         accelist.append(100*float(acce)/nstep)
         #if acce==0: break
         T = T*alpha
+        
     return citynum, accelist, Tem
 
 
 def anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum):
     '''
-    Executes the annealing procedure by using the swap method,
+    Executes the annealing procedure by using swap moves,
     and the minimization of the distance as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
@@ -358,12 +362,13 @@ def anneal_swap_distance(N, alpha, T, city, T_min, nstep, citynum):
         accelist.append(float(acce)/nstep)
         #if acce==0: break
         T = T*alpha
+        
     return citynum, accelist, Tem
 
 
 def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
     '''
-    Executes the annealing procedure by using the prune and graft method,
+    Executes the annealing procedure by using prune and graft moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
@@ -410,11 +415,13 @@ def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citynum):
         accelist.append(100*float(acce)/nstep)
         #if acce==0: break
         T = T*alpha
+        
     return citynum, accelist, Tem
+
 
 def anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum):
     '''
-    Executes the annealing procedure by using the prune and graft method,
+    Executes the annealing procedure by using prune and graft moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
@@ -430,7 +437,6 @@ def anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum):
         accelist: list containing the acceptance rate for each temperature.   
         Tem: list containing the temperatures.
     '''
-
     Tem = []
     accelist = []
     old=length(N, city, citynum)
@@ -462,4 +468,5 @@ def anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum):
         accelist.append(100*float(acce)/nstep)
         #if acce==0: break
         T = T*alpha  
+        
     return citynum, accelist, Tem
