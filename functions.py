@@ -9,7 +9,7 @@ import numpy.random as rand
 import configparser
 
 config = configparser.ConfigParser()
-config.read('input.txt')
+config.read('inputs.txt')
 
 file1 = config.get('files','distances')
 file2 = config.get('files','path')

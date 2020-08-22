@@ -10,7 +10,7 @@ import functions
 
 
 config = configparser.ConfigParser()
-config.read('input.txt')
+config.read('inputs.txt')
 
 N = config.getint('parameters', 'N') 
 iterations = config.getint('parameters', 'iterations')
