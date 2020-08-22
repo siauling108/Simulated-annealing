@@ -1,0 +1,17 @@
+[parameters]
+N = 100
+iterations = 3
+T_min = 0.1
+T = 5.
+alpha = 0.8
+nstep = 500
+
+[files]
+distances:  ./data/distances.npy
+path:     ./data/path.npy
+Tem:        ./data/Tem.npy
+tot_accept: ./data/tot_accept.npy
+
+path_pl:         ./plots/path_plot.png
+acc_pl:          ./plots/acceptance_plot.png
+optimization_pl: ./plots/distance_opt.png
