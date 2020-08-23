@@ -6,10 +6,7 @@ Created on Wed Aug 19 09:57:11 2020
 """
 import hypothesis
 from hypothesis import strategies as st
-from hypothesis import given, assume, settings
-import hypothesis.extra.numpy as xnp
-import numpy as np
-#import numpy.random as rand
+from hypothesis import given, assume
 import functions
 import configparser
 
@@ -25,17 +22,54 @@ T = config.getfloat('parameters', 'T')
 alpha = config.getfloat('parameters', 'alpha')
 
 
-@given(N=st.integers(1, N))
-@settings(max_examples = 1)
-def test_city(N):
-    city = functions.travel(N)
-    assert len(city) == 2
-
-
-@given(M=st.integers(2,N), city=xnp.arrays(np.float,(2,N),st.floats(0.01,1)), citynum=st.lists(st.integers(),min_size=2,max_size=N))
-@settings(max_examples = 1)
-def test_leng_positive(M, city, citynum):    #doesn't work for now
-    #assume(len(citynum)>1)
-    #assume(all(i > 0 for i in city))        
+@given(M=st.integers(2,N))
+def test_leng_positive(M): 
+    '''
+    Tests if the travel lenght is actually positive.
+    '''
+    city = functions.travel(M)
+    citynum = list(range(M))
+    assume(len(city[:]==len(citynum)))
     distance = functions.length(M, city, citynum)
     assert distance > 0
+    
+    
+@given(x=st.integers(0,N-1), y=st.integers(0,N-1), citynum=st.lists(st.integers(1, N-1),min_size=2,max_size=N,unique=True))   
+def test_breverse(x, y, citynum):  
+    '''
+    Checks if the block reverse move works correctly.
+    '''
+    assume(x != y)
+    citynum1=functions.breverse(x,y, citynum)
+    citynum2=functions.breverse(y,x, citynum1)
+    assert citynum1 == citynum2
+
+    
+@given(x=st.integers(0,N-1), y=st.integers(0,N-1), citynum=st.lists(st.integers(1, N-1),min_size=2,max_size=N,unique=True))   
+def test_swap(x, y, citynum):  
+    '''
+    Checks if the swap move works correctly.
+    '''
+    assume(x != y)
+    citynum1=functions.swap(x,y, citynum)
+    citynum2=functions.swap(y,x, citynum1)
+    assert citynum1 == citynum2
+    
+    
+@given(x=st.integers(0,N-1), y=st.integers(0,N-1), z=st.integers(0,N-1), citynum=st.lists(st.integers(1, N-1),min_size=2,max_size=N,unique=True))   
+def test_prunegraft(x, y, z, citynum):  
+    '''
+    Checks if the prune and graft move works correctly,
+    by also checking that the lenght of citynum has not changed.
+    '''
+    assume(x != y)
+    citynum1=functions.prunegraft(x, y, z, citynum)
+    citynum2=functions.prunegraft(y, x, z, citynum1)
+    assert citynum1 == citynum2
+    
+    
+
+
+
+
+
