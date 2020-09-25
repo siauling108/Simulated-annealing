@@ -59,8 +59,7 @@ def test_swap(x, y, citynum):
 @given(x=st.integers(0,N-1), y=st.integers(0,N-1), z=st.integers(0,N-1), citynum=st.lists(st.integers(1, N-1),min_size=2,max_size=N,unique=True))   
 def test_prunegraft(x, y, z, citynum):  
     '''
-    Checks if the prune and graft move works correctly,
-    by also checking that the lenght of citynum has not changed.
+    Checks if the prune and graft move works correctly.
     '''
     assume(x != y)
     citynum1=functions.prunegraft(x, y, z, citynum)
