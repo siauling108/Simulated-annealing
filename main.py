@@ -39,7 +39,7 @@ while True:
 city = functions.travel(N)
 citynum = list(range(N))
 start=functions.length(N, city, citynum)
-print('Initial distance:',start)
+print('Initial distance:', round(start, 4))
 distances=[start]
 T_len = functions.Tem_length(T, T_min, alpha) #I need it in order to def. tot_acceptance
 tot_acceptance = np.zeros((iterations, T_len))
@@ -58,10 +58,9 @@ for ii in range(iterations):
     if choice == 'PD':
         citynum, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, citynum)
     
-    print('Starting.')
     tot_acceptance[ii][:]=accelist
     distances.append(functions.length(N, city, citynum))
-    print('Current distance:',distances[ii+1],', Iteration:',ii+1)
+    print('Current distance:', round(distances[ii+1], 4),', Iteration:',ii+1)
 
 path = functions.get_path(N, city, citynum)
 
@@ -70,5 +69,5 @@ np.save(file2, path)
 np.save(file3, Tem)
 np.save(file4, tot_acceptance)
     
-print('Final distance:',distances[-1])
-print("Percentage decrease of the distance", (distances[0]-distances[-1])/distances[0]*100., "%")
+print('Final distance:',round(distances[-1], 4))
+print("Percentage decrease of the distance", round((distances[0]-distances[-1])/distances[0]*100, 4), "%")
