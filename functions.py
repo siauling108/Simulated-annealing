@@ -36,18 +36,21 @@ def travel(N):
     return city
 
 
-def length(city):
+def length(city, citylist):
     '''
     Calculates the length of the travel.
     Parameters:
         city: coordinates of the cities (array).
+        citylist: list containing the number associated to each city,
+                 and their visiting order (i.e. the list index number).
+
     Returns:
         leng: length of the travel.
     '''
     leng = 0.
     for i in range(len(city[0])):
         for icoo in (0, 1): #coo=coordinate, loop for each component
-            leng += np.sqrt((city[icoo][i]-city[icoo][i-1])**2)
+            leng += np.sqrt((city[icoo][citylist[i]]-city[icoo][citylist[i-1]])**2)
         
     return leng
 
@@ -167,16 +170,14 @@ def prunegraft(x , y, z, citylist):
 #--------------------------------------------------------------------------|
  
        
-def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citylist):
+def anneal_BRev_distance(N, Tem, city, nstep, citylist):
     '''
     Executes the annealing procedure by using block reverse moves,
     and the minimization of the distance as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: temperature scaling parameter.
-        T: maximum "temperature" of the system.
+        Tem: temperatures' array.
         city: coordinates of the cities.
-        T_min: minimum temperature.
         nstep: number of moves for a single iteration.
         citylist: list containing the number associated to each city,
                  and their visiting order (i.e. the list index number).        
@@ -185,10 +186,9 @@ def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citylist):
         accelist: list containing the acceptance rate for each temperature.   
         Tem: list containing the temperatures.
     '''
-    Tem = []
     accelist = []
-    old=length(N, city, citylist)
-    while T > T_min:
+    old=length(city, citylist)
+    for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
@@ -198,20 +198,18 @@ def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citylist):
                 x = int(N*rand.rand())
                 y = int(N*rand.rand())
             citylist = breverse(x, y, citylist)
-            new = length(N, city, citylist) 
+            new = length(city, citylist) 
             
-            if np.exp(-(new-old)/T) >= 1:
+            if np.exp(-(new-old)/Tem[i]) >= 1:
                 old = new
                 acce += 1
-                new = length(N, city, citylist)
+                new = length(city, citylist)
             else:
                 citylist=breverse(y, x, citylist) 
                 
-        Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        T = T*alpha
         
-    return citylist, accelist, Tem
+    return citylist, accelist
  
        
 def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citylist):

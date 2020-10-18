@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import configparser
 
 config = configparser.ConfigParser()
-config.read('inpus.txt')
+config.read('inputs.txt')
 
 iterations = config.getint('parameters', 'iterations')
 file1 = config.get('files','distances')
