@@ -18,6 +18,7 @@ file4 = config.get('files','tot_accept')
 
 N = config.getint('parameters', 'N')
 citylist = list(range(N))
+rand.seed()
 
 def travel(N):
     '''
@@ -50,22 +51,22 @@ def length(city):
         
     return leng
 
-def Tem_length(T, T_min, alpha):
+def Temp(T, T_min, alpha):
     '''
-    Gives the number of the temperatures considered in the annealing process.
+    Calculates and returns the temperature list.
     Parameters:
         T: maximum "temperature" of the system.
         T_min: minimum temperature.
         alpha: T scaling parameter.
     Returns:
-        The number of temperatures considered.
+        The temperature list.
     '''
-    count = 0
-    while T > T_min:
-        count += 1
+    Tem = []
+    while T >= T_min:
+        Tem.append(T)
         T = T*alpha
         
-    return count
+    return Tem
 
 
 def get_path(N, city, citylist):
@@ -188,7 +189,7 @@ def anneal_BRev_distance(N, alpha, T, city, T_min, nstep, citylist):
     accelist = []
     old=length(N, city, citylist)
     while T > T_min:
-        rand.seed(); acce = 0; ii = 0
+        acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
             x = int(N*rand.rand())
@@ -235,7 +236,7 @@ def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citylist):
     accelist = []
     old=length(N, city, citylist)
     while T > T_min:
-        rand.seed(); acce = 0; ii = 0
+        acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
             x = int(N*rand.rand())
@@ -282,7 +283,7 @@ def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, citylist):
     accelist = []
     old=length(N, city, citylist)
     while T > T_min:
-        rand.seed(); acce = 0; ii = 0
+        acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
             ir = int(N*rand.rand())
@@ -329,7 +330,7 @@ def anneal_swap_distance(N, alpha, T, city, T_min, nstep, citylist):
     accelist = []
     old = length(N, city, citylist)
     while T > T_min:
-        rand.seed(); acce=0; ii=0
+        acce=0; ii=0
         while ii <= nstep:
             ii += 1
             ir = int(N*rand.rand())
@@ -376,7 +377,7 @@ def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citylist):
     accelist = []
     old=length(N, city, citylist)
     while T > T_min:
-        rand.seed(); acce = 0; ii = 0
+        acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
             save = []    #needed in case of move rejection
@@ -428,7 +429,7 @@ def anneal_PG_distance(N, alpha, T, city, T_min, nstep, citylist):
     accelist = []
     old=length(N, city, citylist)
     while T > T_min:
-        rand.seed(); acce = 0; ii = 0
+        acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
             save = []
