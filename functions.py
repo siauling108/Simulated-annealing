@@ -89,53 +89,56 @@ def breverse(r1, r2, path):
     return path
     
 
-def swap(i, j, path):
+def swap(r1, r2, path):
     '''
     Executes a swap move.
     Parameters:
-        i, j: two randomly generated numbers between 0 and N-1.
+        r1, r2: two randomly generated numbers between 0 and N-1.
         N: number of cities to consider.
     Returns:
         path: updated path.
     '''
-    save = path[i]
-    path[i] = path[j]
-    path[j] = save
+    for i in range(len(path)):
+        save = path[i][r1]
+        path[i][r1] = path[i][r2]
+        path[i][r2] = save
     
     return path
 
 
-def prunegraft(x , y, z, path):
+def prunegraft(r1 , r2, r3, path):
     '''
     Executes a prune and graft move.
     Parameters:
-        x, y, z: three randomly generated numbers between 0 and N-1.
+        r1 , r2, r3: three randomly generated numbers between 0 and N-1.
     Returns:
         path: updated path.
 
     '''
-    i = min(x, y)
-    j = max(x, y)
-    k = z
-    if k > i and k < j:
-        a = path[0:i]
-        b = path[j:N]
-        dummy = b+a
-        dummy = dummy[::-1]
-        for m in range(len(dummy)):
-            path.insert(k+m, dummy[m])
-        del path[j+len(dummy):N+len(dummy)]
-        del path[0:i]
-    if k <= i:
-        dummy = path[i:j]
-        for m in range(len(dummy)):
-            path.insert(k+m, dummy[m])
-        del path[i+len(dummy):j+len(dummy)]
-    if k >= j:
-        dummy = path[i:j]
-        for m in range(len(dummy)):
-            path.insert(k+m,dummy[m])
-        del path[i:j] 
+    i = min(r1, r2)
+    j = max(r1, r2)
+    k = r3
+    
+    for d in range(len(path)):
+        if k > i and k < j:
+            a = path[d][0:i]
+            b = path[d][j:N]
+            dummy = b+a
+            dummy = dummy[::-1]
+            for m in range(len(dummy)):
+                path[d].insert(k+m, dummy[m])
+            del path[d][j+len(dummy):N+len(dummy)]
+            del path[d][0:i]
+        if k <= i:
+            dummy = path[d][i:j]
+            for m in range(len(dummy)):
+                path[d].insert(k+m, dummy[m])
+            del path[d][i+len(dummy):j+len(dummy)]
+        if k >= j:
+            dummy = path[d][i:j]
+            for m in range(len(dummy)):
+                path[d].insert(k+m,dummy[m])
+            del path[d][i:j] 
         
     return path
  
@@ -182,246 +185,200 @@ def anneal_BRev_distance(N, Tem, path, nstep):
     return path, accelist
  
        
-def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citylist):
+def anneal_BRev_Metropolis(N, Tem, path, nstep):
     '''
     Executes the annealing procedure by using block reverse moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: temperature scaling parameter.
-        T: maximum "temperature" of the system.
-        city: coordinates of the cities.
-        T_min: minimum temperature.
+        Tem: temperatures' array.
+        path: coordinates of the cities.
         nstep: number of moves for a single iteration.
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).        
     Returns:
-        citylist: updated citylist.
+        path: updated path.
         accelist: list containing the acceptance rate for each temperature.   
-        Tem: list containing the temperatures.
     '''
-    Tem = []
     accelist = []
-    old=length(N, city, citylist)
-    while T > T_min:
+    old=length(path)
+    for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
-            x = int(N*rand.rand())
-            y = int(N*rand.rand())
-            while x > (N-1) and y > (N-1) : # In order to avoid IndexError
-                x = int(N*rand.rand())
-                y = int(N*rand.rand())
-            citylist = breverse(x, y, citylist)
-            new = length(N, city, citylist)
+            r1 = int(N*rand.rand())
+            r2 = int(N*rand.rand())
+            while r1 > (N-1) and r2 > (N-1) : # In order to avoid IndexError
+                r1 = int(N*rand.rand())
+                r2 = int(N*rand.rand())
+            path = breverse(r1, r2, path)
+            new = length(path)
             
-            if np.exp(-(new-old)/T) > rand.rand():
+            if np.exp(-(new-old)/Tem[i]) > rand.rand():
                 old = new
                 acce += 1
-                new = length(N, city, citylist)
+                new = length(path)
             else:
-                citylist = breverse(x, y, citylist)
+                path = breverse(r1, r2, path)
                 
-        Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        T = T*alpha  
         
-    return citylist, accelist, Tem
+    return path, accelist
 
         
-def anneal_swap_Metropolis(N, T, alpha, city, T_min, nstep, citylist):
+def anneal_swap_Metropolis(N, Tem, path, nstep):
     '''
     Executes the annealing procedure by using swap moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: temperature scaling parameter.
-        T: maximum "temperature" of the system.
-        city: coordinates of the cities.
-        T_min: minimum temperature.
+        Tem: temperatures' array.
+        path: coordinates of the cities.
         nstep: number of moves for a single iteration.
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).        
     Returns:
-        citylist: updated citylist.
+        path: updated path.
         accelist: list containing the acceptance rate for each temperature.   
-        Tem: list containing the temperatures.
     '''
-    Tem = []
     accelist = []
-    old=length(N, city, citylist)
-    while T > T_min:
+    old = length(path)
+    for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
-            ir = int(N*rand.rand())
-            ir2 = int(N*rand.rand())
-            while ir > (N-1) and ir2 > (N-1) : # In order to avoid IndexError
-                ir = int(N*rand.rand())
-                ir2 = int(N*rand.rand())
-            citylist = swap(ir, ir2, citylist)
-            new = length(N, city, citylist)
+            r1 = int(N*rand.rand())
+            r2 = int(N*rand.rand())
+            while r1 > (N-1) and r2 > (N-1) : # In order to avoid IndexError
+                r1 = int(N*rand.rand())
+                r2 = int(N*rand.rand())
+            path = swap(r1, r2, path)
+            new = length(path)
             
-            if np.exp(-(new-old)/T) > rand.rand():
+            if np.exp(-(new-old)/Tem[i]) > rand.rand():
                 old = new
                 acce += 1
-                new = length(N, city, citylist)
+                new = length(path)
             else:
-                citylist = swap(ir2,ir, citylist)   
+                path = swap(r2, r1, path)   
                 
-        Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        T = T*alpha
         
-    return citylist, accelist, Tem
+    return path, accelist
 
 
-def anneal_swap_distance(N, alpha, T, city, T_min, nstep, citylist):
+def anneal_swap_distance(N, Tem, path, nstep):
     '''
     Executes the annealing procedure by using swap moves,
     and the minimization of the distance as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: temperature scaling parameter.
-        T: maximum "temperature" of the system.
-        city: coordinates of the cities.
-        T_min: minimum temperature.
+        Tem: temperatures' array.
+        path: coordinates of the cities.
         nstep: number of moves for a single iteration.
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).        
     Returns:
-        citylist: updated citylist.
+        path: updated path.
         accelist: list containing the acceptance rate for each temperature.   
-        Tem: list containing the temperatures.
     '''
-    Tem = []
     accelist = []
-    old = length(N, city, citylist)
-    while T > T_min:
+    old = length(path)
+    for i in range(len(Tem)):
         acce=0; ii=0
         while ii <= nstep:
             ii += 1
-            ir = int(N*rand.rand())
-            ir2 = int(N*rand.rand())
-            while ir > (N-1) and ir2 > (N-1) : # In order not to get and IndexError
-                ir = int(N*rand.rand())
-                ir2 = int(N*rand.rand())
-            citylist = swap(ir, ir2, citylist)
-            new = length(N, city, citylist)
+            r1 = int(N*rand.rand())
+            r2 = int(N*rand.rand())
+            while r1 > (N-1) and r2 > (N-1) : # In order not to get and IndexError
+                r1 = int(N*rand.rand())
+                r2 = int(N*rand.rand())
+            path = swap(r1, r2, path)
+            new = length(path)
             
-            if np.exp(-(new-old)/T) >= 1:
+            if np.exp(-(new-old)/Tem[i]) >= 1:
                 old = new
                 acce += 1
-                new = length(N, city, citylist)
+                new = length(path)
             else:
-                citylist = swap(ir2, ir, citylist)
+                path = swap(r2, r1, path)
         
-        Tem.append(T)
-        accelist.append(float(acce)/nstep)
-        T = T*alpha
+        accelist.append(100*float(acce)/nstep)
         
-    return citylist, accelist, Tem
+    return path, accelist
 
 
-def anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citylist):
+def anneal_PG_Metropolis(N, Tem, path, nstep):
     '''
     Executes the annealing procedure by using prune and graft moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: temperature scaling parameter.
-        T: maximum "temperature" of the system.
-        city: coordinates of the cities.
-        T_min: minimum temperature.
+        Tem: temperatures' array.
+        path: coordinates of the cities.
         nstep: number of moves for a single iteration.
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).        
     Returns:
-        citylist: updated citylist.
+        path: updated path.
         accelist: list containing the acceptance rate for each temperature.   
-        Tem: list containing the temperatures.
     '''
-    Tem = []
     accelist = []
-    old=length(N, city, citylist)
-    while T > T_min:
+    old = length(path)
+    for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
-            save = []    #needed in case of move rejection
-            for m in range(N):
-                save.append(citylist[m])
-            x = int(N*rand.rand())
-            y = int(N*rand.rand())
-            z = int(N*rand.rand())
-            while x > (N-1) and y > (N-1) and z > (N-1) : # In order to avoid IndexError
-                x = int(N*rand.rand())
-                y = int(N*rand.rand())
-                z = int(N*rand.rand())
-            citylist = prunegraft(x, y, z, citylist) 
-            new = length(N, city, citylist)
+            r1 = int(N*rand.rand())
+            r2 = int(N*rand.rand())
+            r3 = int(N*rand.rand())
+            while r1 > (N-1) and r2 > (N-1) and r3 > (N-1) : # In order to avoid IndexError
+                r1 = int(N*rand.rand())
+                r2 = int(N*rand.rand())
+                r3 = int(N*rand.rand())
+            path = prunegraft(r1, r2, r3, path) 
+            new = length(path)
             
-            if np.exp(-(new-old)/T) > rand.rand():
+            if np.exp(-(new-old)/Tem[i]) > rand.rand():
                 old = new
                 acce += 1
-                new = length(N, city, citylist)
+                new = length(path)
             else:
-                citylist = save
+                path = prunegraft(r2, r1, r3, path) 
         
-        Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        T = T*alpha
         
-    return citylist, accelist, Tem
+    return path, accelist
 
 
-def anneal_PG_distance(N, alpha, T, city, T_min, nstep, citylist):
+def anneal_PG_distance(N, Tem, path, nstep):
     '''
     Executes the annealing procedure by using prune and graft moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
-        alpha: temperature scaling parameter.
-        T: maximum "temperature" of the system.
-        city: coordinates of the cities.
-        T_min: minimum temperature.
+        Tem: temperatures' array.
+        path: coordinates of the cities.
         nstep: number of moves for a single iteration.
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).        
     Returns:
-        citylist: updated citylist.
+        path: updated path.
         accelist: list containing the acceptance rate for each temperature.   
-        Tem: list containing the temperatures.
     '''
-    Tem = []
     accelist = []
-    old=length(N, city, citylist)
-    while T > T_min:
+    old = length(path)
+    for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
-            save = []
-            for m in range(N):
-                save.append(citylist[m])
-            x = int(N*rand.rand())
-            y = int(N*rand.rand())
-            z = int(N*rand.rand())
-            while x > (N-1) and y > (N-1) and z > (N-1) : # In order to avoid IndexError
-                x = int(N*rand.rand())
-                y = int(N*rand.rand())
-                z = int(N*rand.rand())
-            citylist = prunegraft(x, y, z, citylist)
-            new = length(N, city, citylist)
+            r1 = int(N*rand.rand())
+            r2 = int(N*rand.rand())
+            r3 = int(N*rand.rand())
+            while r1 > (N-1) and r2 > (N-1) and r3 > (N-1) : # In order to avoid IndexError
+                r1 = int(N*rand.rand())
+                r2 = int(N*rand.rand())
+                r3 = int(N*rand.rand())
+            path = prunegraft(r1, r2, r3, path)
+            new = length(path)
             
-            if np.exp(-(new-old)/T) >= 1:
+            if np.exp(-(new-old)/Tem[i]) >= 1:
                 old = new
                 acce += 1
-                new = length(N, city, citylist)
+                new = length(path)
             else:
-                citylist = save
+                path = prunegraft(r2, r1, r3, path) 
             
-        Tem.append(T)
         accelist.append(100*float(acce)/nstep)
-        T = T*alpha  
         
-    return citylist, accelist, Tem
+    return path, accelist
