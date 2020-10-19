@@ -36,9 +36,8 @@ while True:
     if choice in ['BD', 'BM', 'SM', 'SD', 'PM', 'PD']:
         break
 
-city = functions.travel(N)
-citylist = list(range(N))
-start=functions.length(city, citylist)
+path = functions.travel(N)
+start=functions.length(path)
 print('Initial distance:', round(start, 4))
 distances=[start]
 Tem = functions.Temp(T, T_min, alpha) #I need it in order to def. tot_acceptance
@@ -46,23 +45,21 @@ tot_acceptance = np.zeros((iterations, len(Tem)))
 
 for ii in range(iterations):
     if choice == 'BD': 
-        citylist, accelist=functions.anneal_BRev_distance(N, Tem, city, nstep, citylist)
+        path, accelist=functions.anneal_BRev_distance(N, Tem, path, nstep)
     if choice == 'BM':
-        citylist, accelist, Tem=functions.anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citylist) 
+        pathlist, accelist, Tem=functions.anneal_BRev_Metropolis(N, alpha, T, path, T_min, nstep, pathlist) 
     if choice == 'SM':
-        citylist, accelist, Tem=functions.anneal_swap_Metropolis(N, alpha, T, city, T_min, nstep, citylist) #BOH
+        pathlist, accelist, Tem=functions.anneal_swap_Metropolis(N, alpha, T, path, T_min, nstep, pathlist) #BOH
     if choice == 'SD':
-        citylist, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, city, T_min, nstep, citylist) 
+        pathlist, accelist, Tem=functions.anneal_swap_distance(N, alpha, T, path, T_min, nstep, pathlist) 
     if choice == 'PM':
-        citylist, accelist, Tem=functions.anneal_PG_Metropolis(N, alpha, T, city, T_min, nstep, citylist)
+        pathlist, accelist, Tem=functions.anneal_PG_Metropolis(N, alpha, T, path, T_min, nstep, pathlist)
     if choice == 'PD':
-        citylist, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, city, T_min, nstep, citylist)
+        pathlist, accelist, Tem=functions.anneal_PG_distance(N, alpha, T, path, T_min, nstep, pathlist)
     
     tot_acceptance[ii][:]=accelist
-    distances.append(functions.length(city, citylist))
+    distances.append(functions.length(path))
     print('Current distance:', round(distances[ii+1], 4),', Iteration:',ii+1)
-
-path = functions.get_path(N, city, citylist)
 
 np.save(file1, distances)
 np.save(file2, path)

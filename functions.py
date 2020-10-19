@@ -17,7 +17,6 @@ file3 = config.get('files','Tem')
 file4 = config.get('files','tot_accept')
 
 N = config.getint('parameters', 'N')
-citylist = list(range(N))
 rand.seed()
 
 def travel(N):
@@ -26,31 +25,29 @@ def travel(N):
     Parameter:
         N: number of cities to consider.
     Returns:
-        city: array containing the cities coordinates.
+        path: array containing the cities coordinates.
     '''    
-    city = np.zeros((2, N))
+    path = np.zeros((2, N))
     for i in range(N):
         for j in (0, 1):
-            city[j][i] = rand.rand()
+            path[j][i] = rand.rand()
             
-    return city
+    return path
 
 
-def length(city, citylist):
+def length(path):
     '''
     Calculates the length of the travel.
     Parameters:
-        city: coordinates of the cities (array).
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).
+        path: coordinates of the cities (array).
 
     Returns:
         leng: length of the travel.
     '''
     leng = 0.
-    for i in range(len(city[0])):
+    for i in range(len(path[0])):
         for icoo in (0, 1): #coo=coordinate, loop for each component
-            leng += np.sqrt((city[icoo][citylist[i]]-city[icoo][citylist[i-1]])**2)
+            leng += np.sqrt((path[icoo][i]-path[icoo][i-1])**2)
         
     return leng
 
@@ -72,144 +69,117 @@ def Temp(T, T_min, alpha):
     return Tem
 
 
-def get_path(N, city, citylist):
-    '''
-    Calculates an array with the optimized path.
-    Parameters:
-        N: number of cities to consider.
-        city: coordinates of the cities (array).
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).
-    '''
-    path = np.zeros((2, N+1))
-    for k in range(N):
-        for i in (0, 1):
-            path[i][k]=city[i][citylist[k]]
-    path[0][N]=city[0][citylist[0]]
-    path[1][N]=city[1][citylist[0]]  
-    
-    return path
-
-
 #------------------------------------------------------------------------------|
 
     
-def breverse(x, y, citylist):
+def breverse(r1, r2, path):
     '''
     Executes a block reverse move.
     Parameters:
-        x, y: two randomly generated numbers between 0 and N-1.
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).
+        r1, r2: two randomly generated numbers between 0 and N-1.
     Returns:
-        citylist: updated citylist.
+        path: updated path.
     '''
-    j = max(x,y)
-    i = min(x,y)
-    dummy = citylist[i:j+1]
-    citylist[i:j+1] = dummy[::-1] 
+    j = max(r1,r2)
+    i = min(r1,r2)
+    for k in range(len(path)):
+        dummy = path[k][i:j+1]
+        path[k][i:j+1] = dummy[::-1] 
     
-    return citylist
+    return path
     
 
-def swap(i, j, citylist):
+def swap(i, j, path):
     '''
     Executes a swap move.
     Parameters:
         i, j: two randomly generated numbers between 0 and N-1.
         N: number of cities to consider.
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).
     Returns:
-        citylist: updated citylist.
+        path: updated path.
     '''
-    save = citylist[i]
-    citylist[i] = citylist[j]
-    citylist[j] = save
+    save = path[i]
+    path[i] = path[j]
+    path[j] = save
     
-    return citylist
+    return path
 
 
-def prunegraft(x , y, z, citylist):
+def prunegraft(x , y, z, path):
     '''
     Executes a prune and graft move.
     Parameters:
         x, y, z: three randomly generated numbers between 0 and N-1.
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).
     Returns:
-        citylist: updated citylist.
+        path: updated path.
 
     '''
     i = min(x, y)
     j = max(x, y)
     k = z
     if k > i and k < j:
-        a = citylist[0:i]
-        b = citylist[j:N]
+        a = path[0:i]
+        b = path[j:N]
         dummy = b+a
         dummy = dummy[::-1]
         for m in range(len(dummy)):
-            citylist.insert(k+m, dummy[m])
-        del citylist[j+len(dummy):N+len(dummy)]
-        del citylist[0:i]
+            path.insert(k+m, dummy[m])
+        del path[j+len(dummy):N+len(dummy)]
+        del path[0:i]
     if k <= i:
-        dummy = citylist[i:j]
+        dummy = path[i:j]
         for m in range(len(dummy)):
-            citylist.insert(k+m, dummy[m])
-        del citylist[i+len(dummy):j+len(dummy)]
+            path.insert(k+m, dummy[m])
+        del path[i+len(dummy):j+len(dummy)]
     if k >= j:
-        dummy = citylist[i:j]
+        dummy = path[i:j]
         for m in range(len(dummy)):
-            citylist.insert(k+m,dummy[m])
-        del citylist[i:j] 
+            path.insert(k+m,dummy[m])
+        del path[i:j] 
         
-    return citylist
+    return path
  
        
 #--------------------------------------------------------------------------|
  
        
-def anneal_BRev_distance(N, Tem, city, nstep, citylist):
+def anneal_BRev_distance(N, Tem, path, nstep):
     '''
     Executes the annealing procedure by using block reverse moves,
     and the minimization of the distance as the move acceptance criterion.
     Parameters:
         N: number of the cities to consider.
         Tem: temperatures' array.
-        city: coordinates of the cities.
+        path: coordinates of the cities.
         nstep: number of moves for a single iteration.
-        citylist: list containing the number associated to each city,
-                 and their visiting order (i.e. the list index number).        
     Returns:
-        citylist: updated citylist.
+        path: updated path.
         accelist: list containing the acceptance rate for each temperature.   
-        Tem: list containing the temperatures.
     '''
     accelist = []
-    old=length(city, citylist)
+    old=length(path)
     for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
-            x = int(N*rand.rand())
-            y = int(N*rand.rand())
-            while x > (N-1) and y > (N-1) : # In order to avoid IndexError
-                x = int(N*rand.rand())
-                y = int(N*rand.rand())
-            citylist = breverse(x, y, citylist)
-            new = length(city, citylist) 
+            r1 = int(N*rand.rand())
+            r2 = int(N*rand.rand())
+            while r1 > (N-1) and r2 > (N-1) : # In order to avoid IndexError
+                r1 = int(N*rand.rand())
+                r2 = int(N*rand.rand())
+            path = breverse(r1, r2, path)
+            new = length(path) 
             
             if np.exp(-(new-old)/Tem[i]) >= 1:
                 old = new
                 acce += 1
-                new = length(city, citylist)
+                new = length(path)
             else:
-                citylist=breverse(y, x, citylist) 
+                path=breverse(r2, r1, path) 
                 
         accelist.append(100*float(acce)/nstep)
         
-    return citylist, accelist
+    return path, accelist
  
        
 def anneal_BRev_Metropolis(N, alpha, T, city, T_min, nstep, citylist):
