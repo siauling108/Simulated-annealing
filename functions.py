@@ -77,6 +77,7 @@ def breverse(r1, r2, path):
     Executes a block reverse move.
     Parameters:
         r1, r2: two randomly generated numbers between 0 and N-1.
+        path: coordinates of the cities (array).
     Returns:
         path: updated path.
     '''
@@ -94,7 +95,7 @@ def swap(r1, r2, path):
     Executes a swap move.
     Parameters:
         r1, r2: two randomly generated numbers between 0 and N-1.
-        N: number of cities to consider.
+        path: coordinates of the cities (array).
     Returns:
         path: updated path.
     '''
@@ -111,6 +112,7 @@ def prunegraft(r1 , r2, r3, path):
     Executes a prune and graft move.
     Parameters:
         r1 , r2, r3: three randomly generated numbers between 0 and N-1.
+        path: coordinates of the cities (array).
     Returns:
         path: updated path.
 
@@ -120,25 +122,28 @@ def prunegraft(r1 , r2, r3, path):
     k = r3
     
     for d in range(len(path)):
+        path_l = path[d].tolist()
         if k > i and k < j:
-            a = path[d][0:i]
-            b = path[d][j:N]
+            a = path_l[0:i]
+            b = path_l[j:N]
             dummy = b+a
             dummy = dummy[::-1]
             for m in range(len(dummy)):
-                path[d].insert(k+m, dummy[m])
-            del path[d][j+len(dummy):N+len(dummy)]
-            del path[d][0:i]
+                path_l.insert(k+m, dummy[m])
+            del path_l[j+len(dummy):N+len(dummy)]
+            del path_l[0:i]
         if k <= i:
-            dummy = path[d][i:j]
+            dummy = path_l[i:j]
             for m in range(len(dummy)):
-                path[d].insert(k+m, dummy[m])
-            del path[d][i+len(dummy):j+len(dummy)]
+                path_l.insert(k+m, dummy[m])
+            del path_l[i+len(dummy):j+len(dummy)]
         if k >= j:
-            dummy = path[d][i:j]
+            dummy = path_l[i:j]
             for m in range(len(dummy)):
-                path[d].insert(k+m,dummy[m])
-            del path[d][i:j] 
+                path_l.insert(k+m,dummy[m])
+            del path_l[i:j] 
+            
+        path[d] = np.array(path_l)
         
     return path
  
@@ -280,7 +285,7 @@ def anneal_swap_distance(N, Tem, path, nstep):
     old = length(path)
     for i in range(len(Tem)):
         acce=0; ii=0
-        while ii <= nstep:
+        while ii <= nstep: 
             ii += 1
             r1 = int(N*rand.rand())
             r2 = int(N*rand.rand())
@@ -328,7 +333,9 @@ def anneal_PG_Metropolis(N, Tem, path, nstep):
                 r1 = int(N*rand.rand())
                 r2 = int(N*rand.rand())
                 r3 = int(N*rand.rand())
-            path = prunegraft(r1, r2, r3, path) 
+            
+            backup = path        
+            path = prunegraft(r1, r2, r3, path)
             new = length(path)
             
             if np.exp(-(new-old)/Tem[i]) > rand.rand():
@@ -336,7 +343,7 @@ def anneal_PG_Metropolis(N, Tem, path, nstep):
                 acce += 1
                 new = length(path)
             else:
-                path = prunegraft(r2, r1, r3, path) 
+                path = backup
         
         accelist.append(100*float(acce)/nstep)
         
@@ -369,6 +376,8 @@ def anneal_PG_distance(N, Tem, path, nstep):
                 r1 = int(N*rand.rand())
                 r2 = int(N*rand.rand())
                 r3 = int(N*rand.rand())
+            
+            backup = path
             path = prunegraft(r1, r2, r3, path)
             new = length(path)
             
@@ -377,7 +386,7 @@ def anneal_PG_distance(N, Tem, path, nstep):
                 acce += 1
                 new = length(path)
             else:
-                path = prunegraft(r2, r1, r3, path) 
+                path = backup
             
         accelist.append(100*float(acce)/nstep)
         

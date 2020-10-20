@@ -4,9 +4,10 @@ Created on Wed Aug 19 09:57:11 2020
 
 @author: marco
 """
-import hypothesis
+import numpy as np
 from hypothesis import strategies as st
 from hypothesis import given, assume
+import hypothesis.extra.numpy as xn
 import functions
 import configparser
 
@@ -56,15 +57,15 @@ def test_swap(x, y, citynum):
     assert citynum1 == citynum2
     
     
-@given(x=st.integers(0,N-1), y=st.integers(0,N-1), z=st.integers(0,N-1), citynum=st.lists(st.integers(1, N-1),min_size=2,max_size=N,unique=True))   
-def test_prunegraft(x, y, z, citynum):  
+@given(x=st.integers(0,N-1), y=st.integers(0,N-1), z=st.integers(0,N-1), path=xn.arrays(np.float, (2,100)))   
+def test_prunegraft(x, y, z, path):  
     '''
     Checks if the prune and graft move works correctly.
     '''
     assume(x != y)
-    citynum1=functions.prunegraft(x, y, z, citynum)
-    citynum2=functions.prunegraft(y, x, z, citynum1)
-    assert citynum1 == citynum2
+    path1=functions.prunegraft(x, y, z, path)
+    path2=functions.prunegraft(y, x, z, path1)
+    assert path1.all() == path2.all()
     
     
 
