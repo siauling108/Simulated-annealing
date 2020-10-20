@@ -151,12 +151,11 @@ def prunegraft(r1 , r2, r3, path):
 #--------------------------------------------------------------------------|
  
        
-def anneal_BRev_distance(N, Tem, path, nstep):
+def anneal_BRev_distance(Tem, path, nstep):
     '''
     Executes the annealing procedure by using block reverse moves,
     and the minimization of the distance as the move acceptance criterion.
     Parameters:
-        N: number of the cities to consider.
         Tem: temperatures' array.
         path: coordinates of the cities.
         nstep: number of moves for a single iteration.
@@ -166,6 +165,7 @@ def anneal_BRev_distance(N, Tem, path, nstep):
     '''
     accelist = []
     old=length(path)
+    N = len(path[0])
     for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:
@@ -190,12 +190,11 @@ def anneal_BRev_distance(N, Tem, path, nstep):
     return path, accelist
  
        
-def anneal_BRev_Metropolis(N, Tem, path, nstep):
+def anneal_BRev_Metropolis(Tem, path, nstep):
     '''
     Executes the annealing procedure by using block reverse moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
-        N: number of the cities to consider.
         Tem: temperatures' array.
         path: coordinates of the cities.
         nstep: number of moves for a single iteration.
@@ -205,6 +204,7 @@ def anneal_BRev_Metropolis(N, Tem, path, nstep):
     '''
     accelist = []
     old=length(path)
+    N = len(path[0])
     for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:
@@ -229,12 +229,11 @@ def anneal_BRev_Metropolis(N, Tem, path, nstep):
     return path, accelist
 
         
-def anneal_swap_Metropolis(N, Tem, path, nstep):
+def anneal_swap_Metropolis(Tem, path, nstep):
     '''
     Executes the annealing procedure by using swap moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
-        N: number of the cities to consider.
         Tem: temperatures' array.
         path: coordinates of the cities.
         nstep: number of moves for a single iteration.
@@ -244,6 +243,7 @@ def anneal_swap_Metropolis(N, Tem, path, nstep):
     '''
     accelist = []
     old = length(path)
+    N =len(path[0])
     for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:
@@ -268,12 +268,11 @@ def anneal_swap_Metropolis(N, Tem, path, nstep):
     return path, accelist
 
 
-def anneal_swap_distance(N, Tem, path, nstep):
+def anneal_swap_distance(Tem, path, nstep):
     '''
     Executes the annealing procedure by using swap moves,
     and the minimization of the distance as the move acceptance criterion.
     Parameters:
-        N: number of the cities to consider.
         Tem: temperatures' array.
         path: coordinates of the cities.
         nstep: number of moves for a single iteration.
@@ -283,6 +282,7 @@ def anneal_swap_distance(N, Tem, path, nstep):
     '''
     accelist = []
     old = length(path)
+    N = len(path[0])
     for i in range(len(Tem)):
         acce=0; ii=0
         while ii <= nstep: 
@@ -307,12 +307,11 @@ def anneal_swap_distance(N, Tem, path, nstep):
     return path, accelist
 
 
-def anneal_PG_Metropolis(N, Tem, path, nstep):
+def anneal_PG_Metropolis(Tem, path, nstep):
     '''
     Executes the annealing procedure by using prune and graft moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
-        N: number of the cities to consider.
         Tem: temperatures' array.
         path: coordinates of the cities.
         nstep: number of moves for a single iteration.
@@ -322,6 +321,7 @@ def anneal_PG_Metropolis(N, Tem, path, nstep):
     '''
     accelist = []
     old = length(path)
+    N = len(path[0])
     for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:
@@ -350,12 +350,11 @@ def anneal_PG_Metropolis(N, Tem, path, nstep):
     return path, accelist
 
 
-def anneal_PG_distance(N, Tem, path, nstep):
+def anneal_PG_distance(Tem, path, nstep):
     '''
     Executes the annealing procedure by using prune and graft moves,
     and the Metropolis algorithm as the move acceptance criterion.
     Parameters:
-        N: number of the cities to consider.
         Tem: temperatures' array.
         path: coordinates of the cities.
         nstep: number of moves for a single iteration.
@@ -365,6 +364,7 @@ def anneal_PG_distance(N, Tem, path, nstep):
     '''
     accelist = []
     old = length(path)
+    N = len(path[0])
     for i in range(len(Tem)):
         acce = 0; ii = 0
         while ii <= nstep:

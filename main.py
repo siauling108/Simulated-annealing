@@ -45,17 +45,17 @@ tot_acceptance = np.zeros((iterations, len(Tem)))
 
 for ii in range(iterations):
     if choice == 'BD': 
-        path, accelist=functions.anneal_BRev_distance(N, Tem, path, nstep)
+        path, accelist=functions.anneal_BRev_distance(Tem, path, nstep)
     if choice == 'BM':
-        path, accelist=functions.anneal_BRev_Metropolis(N, Tem, path, nstep) 
+        path, accelist=functions.anneal_BRev_Metropolis(Tem, path, nstep) 
     if choice == 'SM':
-        path, accelist=functions.anneal_swap_Metropolis(N, Tem, path, nstep)
+        path, accelist=functions.anneal_swap_Metropolis(Tem, path, nstep)
     if choice == 'SD':
-        path, accelist=functions.anneal_swap_distance(N, Tem, path, nstep) 
+        path, accelist=functions.anneal_swap_distance(Tem, path, nstep) 
     if choice == 'PM':
-        path, accelist=functions.anneal_PG_Metropolis(N, Tem, path, nstep)
+        path, accelist=functions.anneal_PG_Metropolis(Tem, path, nstep)
     if choice == 'PD':
-        path, accelist=functions.anneal_PG_distance(N, Tem, path, nstep)
+        path, accelist=functions.anneal_PG_distance(Tem, path, nstep)
     
     tot_acceptance[ii][:]=accelist
     distances.append(functions.length(path))
