@@ -107,44 +107,28 @@ def swap(r1, r2, path):
     return path
 
 
-def prunegraft(r1 , r2, r3, path):
+def prunegraft(r1 , r2, path):
     '''
     Executes a prune and graft move.
     Parameters:
-        r1 , r2, r3: three randomly generated numbers between 0 and N-1.
+        r1 , r2: two randomly generated numbers between 0 and N-1.
         path: coordinates of the cities (array).
     Returns:
         path: updated path.
-
     '''
     i = min(r1, r2)
     j = max(r1, r2)
-    k = r3
     
     for d in range(len(path)):
-        path_l = path[d].tolist()
-        if k > i and k < j:
-            a = path_l[0:i]
-            b = path_l[j:N]
-            dummy = b+a
-            dummy = dummy[::-1]
-            for m in range(len(dummy)):
-                path_l.insert(k+m, dummy[m])
-            del path_l[j+len(dummy):N+len(dummy)]
-            del path_l[0:i]
-        if k <= i:
-            dummy = path_l[i:j]
-            for m in range(len(dummy)):
-                path_l.insert(k+m, dummy[m])
-            del path_l[i+len(dummy):j+len(dummy)]
-        if k >= j:
-            dummy = path_l[i:j]
-            for m in range(len(dummy)):
-                path_l.insert(k+m,dummy[m])
-            del path_l[i:j] 
-            
-        path[d] = np.array(path_l)
         
+        path_l = path[d].tolist()
+        path_l_a = path_l[0:i]
+        path_l_b = path_l[i:j]
+        path_l_c = path_l[j:N]
+
+        path_l = path_l_b+path_l_a+path_l_c
+        path[d] = np.array(path_l)    
+                    
     return path
  
        
@@ -181,7 +165,6 @@ def anneal_BRev_distance(Tem, path, nstep):
             if np.exp(-(new-old)/Tem[i]) >= 1:
                 old = new
                 acce += 1
-                new = length(path)
             else:
                 path=breverse(r2, r1, path) 
                 
@@ -220,7 +203,6 @@ def anneal_BRev_Metropolis(Tem, path, nstep):
             if np.exp(-(new-old)/Tem[i]) > rand.rand():
                 old = new
                 acce += 1
-                new = length(path)
             else:
                 path = breverse(r1, r2, path)
                 
@@ -259,7 +241,6 @@ def anneal_swap_Metropolis(Tem, path, nstep):
             if np.exp(-(new-old)/Tem[i]) > rand.rand():
                 old = new
                 acce += 1
-                new = length(path)
             else:
                 path = swap(r2, r1, path)   
                 
@@ -298,7 +279,6 @@ def anneal_swap_distance(Tem, path, nstep):
             if np.exp(-(new-old)/Tem[i]) >= 1:
                 old = new
                 acce += 1
-                new = length(path)
             else:
                 path = swap(r2, r1, path)
         
@@ -328,20 +308,17 @@ def anneal_PG_Metropolis(Tem, path, nstep):
             ii += 1
             r1 = int(N*rand.rand())
             r2 = int(N*rand.rand())
-            r3 = int(N*rand.rand())
-            while r1 > (N-1) and r2 > (N-1) and r3 > (N-1) : # In order to avoid IndexError
+            while r1 > (N-1) and r2 > (N-1): # In order to avoid IndexError
                 r1 = int(N*rand.rand())
                 r2 = int(N*rand.rand())
-                r3 = int(N*rand.rand())
             
-            backup = path        
-            path = prunegraft(r1, r2, r3, path)
+            backup = path
+            path = prunegraft(r1, r2, path)
             new = length(path)
             
             if np.exp(-(new-old)/Tem[i]) > rand.rand():
                 old = new
                 acce += 1
-                new = length(path)
             else:
                 path = backup
         
@@ -371,20 +348,17 @@ def anneal_PG_distance(Tem, path, nstep):
             ii += 1
             r1 = int(N*rand.rand())
             r2 = int(N*rand.rand())
-            r3 = int(N*rand.rand())
-            while r1 > (N-1) and r2 > (N-1) and r3 > (N-1) : # In order to avoid IndexError
+            while r1 > (N-1) and r2 > (N-1): # In order to avoid IndexError
                 r1 = int(N*rand.rand())
                 r2 = int(N*rand.rand())
-                r3 = int(N*rand.rand())
             
             backup = path
-            path = prunegraft(r1, r2, r3, path)
+            path = prunegraft(r1, r2, path)
             new = length(path)
             
             if np.exp(-(new-old)/Tem[i]) >= 1:
                 old = new
                 acce += 1
-                new = length(path)
             else:
                 path = backup
             
