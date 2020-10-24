@@ -23,7 +23,7 @@ def travel(N):
     '''
     Creates a random initial path made of N cities.
     Parameter:
-        N: number of cities to consider.
+        N: number of cities to consider (int).
     Returns:
         path: array containing the cities coordinates.
     '''    
@@ -59,7 +59,7 @@ def Temp(T, T_min, alpha):
         T_min: minimum temperature.
         alpha: T scaling parameter.
     Returns:
-        The temperature list.
+        Tem: The temperature list.
     '''
     Tem = []
     while T >= T_min:
@@ -67,6 +67,25 @@ def Temp(T, T_min, alpha):
         T = T*alpha
         
     return Tem
+
+def RN_gen(N):
+    '''
+    Generates two random numbers.
+    Parameters
+        N : number of cities to consider (int).
+    Returns
+        r1, r2: two random numbers.
+
+    '''
+    r1 = int(N*rand.rand())
+    r2 = int(N*rand.rand())
+    while r1 > (N-1) and r2 > (N-1) : # In order to avoid IndexError
+        r1 = int(N*rand.rand())
+        r2 = int(N*rand.rand())
+            
+    return( r1, r2)
+
+    
 
 
 #------------------------------------------------------------------------------|
@@ -154,11 +173,7 @@ def anneal_BRev_distance(Tem, path, nstep):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
-            r1 = int(N*rand.rand())
-            r2 = int(N*rand.rand())
-            while r1 > (N-1) and r2 > (N-1) : # In order to avoid IndexError
-                r1 = int(N*rand.rand())
-                r2 = int(N*rand.rand())
+            r1, r2 = RN_gen(N)
             path = breverse(r1, r2, path)
             new = length(path) 
             
@@ -192,11 +207,7 @@ def anneal_BRev_Metropolis(Tem, path, nstep):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
-            r1 = int(N*rand.rand())
-            r2 = int(N*rand.rand())
-            while r1 > (N-1) and r2 > (N-1) : # In order to avoid IndexError
-                r1 = int(N*rand.rand())
-                r2 = int(N*rand.rand())
+            r1, r2 = RN_gen(N)
             path = breverse(r1, r2, path)
             new = length(path)
             
@@ -230,11 +241,7 @@ def anneal_swap_Metropolis(Tem, path, nstep):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
-            r1 = int(N*rand.rand())
-            r2 = int(N*rand.rand())
-            while r1 > (N-1) and r2 > (N-1) : # In order to avoid IndexError
-                r1 = int(N*rand.rand())
-                r2 = int(N*rand.rand())
+            r1, r2 = RN_gen(N)
             path = swap(r1, r2, path)
             new = length(path)
             
@@ -268,11 +275,7 @@ def anneal_swap_distance(Tem, path, nstep):
         acce=0; ii=0
         while ii <= nstep: 
             ii += 1
-            r1 = int(N*rand.rand())
-            r2 = int(N*rand.rand())
-            while r1 > (N-1) and r2 > (N-1) : # In order not to get and IndexError
-                r1 = int(N*rand.rand())
-                r2 = int(N*rand.rand())
+            r1, r2 = RN_gen(N)
             path = swap(r1, r2, path)
             new = length(path)
             
@@ -306,12 +309,7 @@ def anneal_PG_Metropolis(Tem, path, nstep):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
-            r1 = int(N*rand.rand())
-            r2 = int(N*rand.rand())
-            while r1 > (N-1) and r2 > (N-1): # In order to avoid IndexError
-                r1 = int(N*rand.rand())
-                r2 = int(N*rand.rand())
-            
+            r1, r2 = RN_gen(N)
             backup = path
             path = prunegraft(r1, r2, path)
             new = length(path)
@@ -346,12 +344,7 @@ def anneal_PG_distance(Tem, path, nstep):
         acce = 0; ii = 0
         while ii <= nstep:
             ii += 1
-            r1 = int(N*rand.rand())
-            r2 = int(N*rand.rand())
-            while r1 > (N-1) and r2 > (N-1): # In order to avoid IndexError
-                r1 = int(N*rand.rand())
-                r2 = int(N*rand.rand())
-            
+            r1, r2 = RN_gen(N)
             backup = path
             path = prunegraft(r1, r2, path)
             new = length(path)
