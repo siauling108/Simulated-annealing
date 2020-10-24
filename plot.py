@@ -54,7 +54,6 @@ def path_plot():
     plt.show()
     
     fig.savefig(plot_a)
-
  
     
 def acceptance_plot(iterations):
@@ -76,8 +75,27 @@ def acceptance_plot(iterations):
     plt.show()
     
     fig.savefig(plot_b)
+ 
+    
+def Temp_profile():
+    '''
+    Plots the temperature profile.
+    '''
+    Tem = np.load(file3)
+    fig = plt.figure()
+    plt.title("Temperature profile")
+    plt.plot (range(len(Tem)), Tem, color = 'red')
+    plt.xlabel("steps (arb. units)")
+    plt.ylabel("Temperature (arb. units)")    
+    plt.grid()
+    plt.show()
+    
+    fig.savefig(plot_a)
+
+    
 
 
 dist_optimization()
 path_plot()
 acceptance_plot(iterations)
+Temp_profile()
