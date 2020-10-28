@@ -19,42 +19,57 @@ T_min = config.getfloat('parameters', 'T_min')
 T = config.getfloat('parameters', 'T')
 alpha = config.getfloat('parameters', 'alpha')
 
+method = config.get('parameters', 'method')
+T_profile = config.get('parameters', 'T_profile')
+travel = config.get('parameters', 'travel')
+
+
 file1 = config.get('files','distances')
 file2 = config.get('files','path')
 file3 = config.get('files','Tem')
 file4 = config.get('files','tot_accept')
 
+'''
 while True:
-    choice = input('''Choose the move type + the acceptance criterion to be used in
+    choice = input( Choose the move type + the acceptance criterion to be used in
                    the annealing procedure:\n
                        BD = block reverse, distance;\n
                        BM = block reverse, Metropolis;\n
                        SM = swap ,Metropolis;\n
                        SD = swap, distance;\n
                        PM = prune and graft, Metropolis;\n
-                       PD = prune and graft, distance.\n''')
+                       PD = prune and graft, distance.\n )
     if choice in ['BD', 'BM', 'SM', 'SD', 'PM', 'PD']:
         break
+'''
 
-path = functions.travel(N)
+
+if travel == 'travel_random':
+    path = functions.travel_RND(N)
+
+if T_profile == 'Temp_decr':
+    Tem = functions.Temp_decr(T, T_min, alpha) 
+
 start=functions.length(path)
-print('Initial distance:', round(start, 4))
 distances=[start]
-Tem = functions.Temp(T, T_min, alpha) #I need it in order to def. tot_acceptance
 tot_acceptance = np.zeros((iterations, len(Tem)))
 
+print('Method:', method)
+print('Travel:', travel)
+print('Initial distance:', round(start, 4))
+
 for ii in range(iterations):
-    if choice == 'BD': 
+    if method == 'BD': 
         path, accelist=functions.anneal_BRev_distance(Tem, path, nstep)
-    if choice == 'BM':
+    if method == 'BM':
         path, accelist=functions.anneal_BRev_Metropolis(Tem, path, nstep) 
-    if choice == 'SM':
+    if method == 'SM':
         path, accelist=functions.anneal_swap_Metropolis(Tem, path, nstep)
-    if choice == 'SD':
+    if method == 'SD':
         path, accelist=functions.anneal_swap_distance(Tem, path, nstep) 
-    if choice == 'PM':
+    if method == 'PM':
         path, accelist=functions.anneal_PG_Metropolis(Tem, path, nstep)
-    if choice == 'PD':
+    if method == 'PD':
         path, accelist=functions.anneal_PG_distance(Tem, path, nstep)
     
     tot_acceptance[ii][:]=accelist

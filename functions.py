@@ -19,7 +19,7 @@ file4 = config.get('files','tot_accept')
 N = config.getint('parameters', 'N')
 rand.seed()
 
-def travel(N):
+def travel_RND(N):
     '''
     Creates a random initial path made of N cities.
     Parameter:
@@ -51,7 +51,7 @@ def length(path):
         
     return leng
 
-def Temp(T, T_min, alpha):
+def Temp_decr(T, T_min, alpha):
     '''
     Calculates and returns the temperature list.
     Parameters:

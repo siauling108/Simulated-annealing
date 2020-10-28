@@ -6,6 +6,11 @@ T = 5.
 alpha = 0.8
 nstep = 500
 
+method = BM
+T_profile = Temp_decr
+travel = travel_random
+
+
 [files]
 distances:  ./data/distances.npy
 path:       ./data/path.npy
