@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import configparser
 
+
 config = configparser.ConfigParser()
 config.read('inputs.txt')
 
@@ -92,8 +93,6 @@ def Temp_profile():
     plt.show()
     
     fig.savefig(plot_d)
-
-    
 
 
 dist_optimization()

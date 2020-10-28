@@ -23,25 +23,13 @@ method = config.get('parameters', 'method')
 T_profile = config.get('parameters', 'T_profile')
 travel = config.get('parameters', 'travel')
 
-
 file1 = config.get('files','distances')
 file2 = config.get('files','path')
 file3 = config.get('files','Tem')
 file4 = config.get('files','tot_accept')
 
-'''
-while True:
-    choice = input( Choose the move type + the acceptance criterion to be used in
-                   the annealing procedure:\n
-                       BD = block reverse, distance;\n
-                       BM = block reverse, Metropolis;\n
-                       SM = swap ,Metropolis;\n
-                       SD = swap, distance;\n
-                       PM = prune and graft, Metropolis;\n
-                       PD = prune and graft, distance.\n )
-    if choice in ['BD', 'BM', 'SM', 'SD', 'PM', 'PD']:
-        break
-'''
+
+#--------------------------------------------------------------|
 
 
 if travel == 'travel_random':
@@ -75,6 +63,7 @@ for ii in range(iterations):
     tot_acceptance[ii][:]=accelist
     distances.append(functions.length(path))
     print('Current distance:', round(distances[ii+1], 4),', Iteration:',ii+1)
+
 
 np.save(file1, distances)
 np.save(file2, path)
