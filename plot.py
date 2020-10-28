@@ -17,9 +17,10 @@ file2 = config.get('files','path')
 file3 = config.get('files','Tem')
 file4 = config.get('files','tot_accept')
 
-plot_a = config.get('files','path_pl')
-plot_b = config.get('files','acc_pl')
-plot_c = config.get('files','optimization_pl')
+plot_a = config.get('files','Path_pl')
+plot_b = config.get('files','AcceptRate_pl')
+plot_c = config.get('files','Length_pl')
+plot_d = config.get('files','Temperature_pl')
 
 
 def dist_optimization():
@@ -90,7 +91,7 @@ def Temp_profile():
     plt.grid()
     plt.show()
     
-    fig.savefig(plot_a)
+    fig.savefig(plot_d)
 
     
 

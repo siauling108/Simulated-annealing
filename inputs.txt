@@ -8,10 +8,11 @@ nstep = 500
 
 [files]
 distances:  ./data/distances.npy
-path:     ./data/path.npy
+path:       ./data/path.npy
 Tem:        ./data/Tem.npy
 tot_accept: ./data/tot_accept.npy
 
-path_pl:         ./plots/path_plot.png
-acc_pl:          ./plots/acceptance_plot.png
-optimization_pl: ./plots/distance_opt.png
+Path_pl:         	./plots/Path_pl.png
+AcceptRate_pl:      	./plots/AcceptRate_pl.png
+Length_pl: 		./plots/Length_pl.png
+Temperature_pl:		./plots/Temperature_pl.png
