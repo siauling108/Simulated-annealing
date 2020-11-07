@@ -55,21 +55,5 @@ def test_swap(x, y, citynum):
     citynum1=functions.swap(x,y, citynum)
     citynum2=functions.swap(y,x, citynum1)
     assert citynum1 == citynum2
-    
-    
-@given(x=st.integers(0,N-1), y=st.integers(0,N-1), z=st.integers(0,N-1), path=xn.arrays(np.float, (2,100)))   
-def test_prunegraft(x, y, z, path):  
-    '''
-    Checks if the prune and graft move works correctly.
-    '''
-    assume(x != y)
-    path1=functions.prunegraft(x, y, z, path)
-    path2=functions.prunegraft(y, x, z, path1)
-    assert path1.all() == path2.all()
-    
-    
-
-
-
 
 

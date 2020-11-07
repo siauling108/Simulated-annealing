@@ -65,7 +65,7 @@ def acceptance_plot(iterations):
     Tem = np.load(file3)
     tot_acceptance = np.load(file4)
     fig = plt.figure()    
-    plt.title("Moves acceptance rate vs. temperature")
+    plt.title("Moves acceptance rate vs. temperature for each iteration")
     plt.xlabel("Temperature (arb. units)")
     plt.ylabel("Moves acceptance rate (%)") 
     lab=[]

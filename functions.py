@@ -55,7 +55,7 @@ def length(path):
 
 def Temp_decr(T, T_min, alpha):
     '''
-    Calculates and returns the temperature list.
+    Calculates and returns the temperature list. Decreasing temperature profile.
     Parameters:
         T: maximum "temperature" of the system.
         T_min: minimum temperature.
@@ -73,7 +73,7 @@ def Temp_decr(T, T_min, alpha):
 
 def RN_gen(N):
     '''
-    Generates two random numbers.
+    Generates two random numbers. Needed for the annealing procedure.
     Parameters
         N : number of cities to consider (int).
     Returns
@@ -83,10 +83,12 @@ def RN_gen(N):
     r1 = int(N*rand.rand())
     r2 = int(N*rand.rand())
     while r1 > (N-1) and r2 > (N-1) : # In order to avoid IndexError
-        r1 = int(N*rand.rand())
-        r2 = int(N*rand.rand())
+        if r1 == r2:     
+            r1 = int(N*rand.rand())
+            r2 = int(N*rand.rand())
+        
             
-    return( r1, r2)
+    return r1, r2
 
 
 #------------------------------------------------------------------------------|
@@ -104,8 +106,8 @@ def breverse(r1, r2, path):
     j = max(r1,r2)
     i = min(r1,r2)
     for k in range(len(path)):
-        dummy = path[k][i:j+1]
-        path[k][i:j+1] = dummy[::-1] 
+        dummy = path[k][i:j]
+        path[k][i:j] = dummy[::-1] 
     
     return path
     
@@ -124,31 +126,6 @@ def swap(r1, r2, path):
         path[i][r1] = path[i][r2]
         path[i][r2] = save
     
-    return path
-
-
-def prunegraft(r1 , r2, path):
-    '''
-    Executes a prune and graft move.
-    Parameters:
-        r1 , r2: two randomly generated numbers between 0 and N-1.
-        path: coordinates of the cities (array).
-    Returns:
-        path: updated path.
-    '''
-    i = min(r1, r2)
-    j = max(r1, r2)
-    
-    for d in range(len(path)):
-        
-        path_l = path[d].tolist()
-        path_l_a = path_l[0:i]
-        path_l_b = path_l[i:j]
-        path_l_c = path_l[j:N]
-
-        path_l = path_l_b+path_l_a+path_l_c
-        path[d] = np.array(path_l)    
-                    
     return path
  
        
@@ -286,76 +263,6 @@ def anneal_swap_distance(Tem, path, nstep):
             else:
                 path = swap(r2, r1, path)
         
-        accelist.append(100*float(acce)/nstep)
-        
-    return path, accelist
-
-
-def anneal_PG_Metropolis(Tem, path, nstep):
-    '''
-    Executes the annealing procedure by using prune and graft moves,
-    and the Metropolis algorithm as the move acceptance criterion.
-    Parameters:
-        Tem: temperatures' array.
-        path: coordinates of the cities.
-        nstep: number of moves for a single iteration.
-    Returns:
-        path: updated path.
-        accelist: list containing the acceptance rate for each temperature.   
-    '''
-    accelist = []
-    old = length(path)
-    N = len(path[0])
-    for i in range(len(Tem)):
-        acce = 0; ii = 0
-        while ii <= nstep:
-            ii += 1
-            r1, r2 = RN_gen(N)
-            backup = path
-            path = prunegraft(r1, r2, path)
-            new = length(path)
-            
-            if np.exp(-(new-old)/Tem[i]) > rand.rand():
-                old = new
-                acce += 1
-            else:
-                path = backup
-        
-        accelist.append(100*float(acce)/nstep)
-        
-    return path, accelist
-
-
-def anneal_PG_distance(Tem, path, nstep):
-    '''
-    Executes the annealing procedure by using prune and graft moves,
-    and the Metropolis algorithm as the move acceptance criterion.
-    Parameters:
-        Tem: temperatures' array.
-        path: coordinates of the cities.
-        nstep: number of moves for a single iteration.
-    Returns:
-        path: updated path.
-        accelist: list containing the acceptance rate for each temperature.   
-    '''
-    accelist = []
-    old = length(path)
-    N = len(path[0])
-    for i in range(len(Tem)):
-        acce = 0; ii = 0
-        while ii <= nstep:
-            ii += 1
-            r1, r2 = RN_gen(N)
-            backup = path
-            path = prunegraft(r1, r2, path)
-            new = length(path)
-            
-            if np.exp(-(new-old)/Tem[i]) >= 1:
-                old = new
-                acce += 1
-            else:
-                path = backup
-            
         accelist.append(100*float(acce)/nstep)
         
     return path, accelist

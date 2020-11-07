@@ -6,7 +6,7 @@ T = 5.
 alpha = 0.8
 nstep = 500
 
-method = BM
+method = PM
 T_profile = Temp_decr
 travel = travel_random
 
